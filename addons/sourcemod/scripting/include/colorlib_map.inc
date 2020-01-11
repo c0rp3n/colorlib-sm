@@ -9,7 +9,7 @@
 #endif
 #define _colorlib_map_included
 
-enum _CL_Colors
+enum CL_Colors
 {
     CL_Color_Default = 0x1,
     CL_Color_Teamcolor = 0x3,
@@ -31,7 +31,7 @@ enum _CL_Colors
     CL_Color_Grey2 = 0xd,
 };
 
-char _CL_ColorMap(char color[16])
+CL_Colors _CL_ColorMap(char color[16])
 {
     if (color[0] == 'd')
     {

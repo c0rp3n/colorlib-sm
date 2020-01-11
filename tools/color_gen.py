@@ -46,7 +46,7 @@ FOOTER = (
     )
 
 ENUM_DEF = (
-    "enum _CL_Colors\n" +
+    "enum CL_Colors\n" +
     "{{\n" +
     "{}" +
     "}};\n"
@@ -55,7 +55,7 @@ ENUM_DEF = (
 ENUM_ENTRY_DEF = TAB + "{} = {},\n"
 
 COLOR_FUNCTION_DEF = (
-    "char _CL_ColorMap(char color[16])\n" +
+    "CL_Colors _CL_ColorMap(char color[16])\n" +
     "{{\n" +
     "{}" +
     "\n" +

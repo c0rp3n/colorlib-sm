@@ -208,11 +208,11 @@ stock void CPrintToChatAllEx(int author, const char[] message, any ...)
 stock void CPrintToServer(const char[] message, any ...)
 {
     char buffer[MAX_MESSAGE_LENGTH];
-	VFormat(buffer, sizeof(buffer), message, 2);
+    VFormat(buffer, sizeof(buffer), message, 2);
 
-	CRemoveTags(buffer, sizeof(buffer));
+    CRemoveTags(buffer, sizeof(buffer));
 
-	PrintToServer(buffer);
+    PrintToServer(buffer);
 }
 
 /**
@@ -230,7 +230,7 @@ stock void CRemoveTags(char[] message, int maxlength)
         if (message[i] == '{')
         {
             ++i;
-            while (message[i] == '}')
+            while (message[i] != '}')
             {
                 ++i;
             }
@@ -241,6 +241,8 @@ stock void CRemoveTags(char[] message, int maxlength)
             ++index;
         }
     }
+
+    strcopy(message, maxlength, buffer);
 }
 
 /**
@@ -307,6 +309,7 @@ stock int CFormat(char[] message, int maxlength, int author = NO_INDEX)
         }
         else if (message[i] == '{')
         {
+            ++i;
             char color[16];
             for (int icolor = 0; icolor < sizeof(color); ++icolor)
             {
@@ -319,7 +322,8 @@ stock int CFormat(char[] message, int maxlength, int author = NO_INDEX)
                 ++i;
             }
 
-            buffer[index] = _CL_ColorMap(color);
+            PrintToServer(color);
+            buffer[index] = view_as<char>(_CL_ColorMap(color));
             ++index;
         }
         else
@@ -328,6 +332,8 @@ stock int CFormat(char[] message, int maxlength, int author = NO_INDEX)
             ++index;
         }
     }
+
+    strcopy(message, maxlength, buffer);
 
     return iRandomPlayer;
 }
