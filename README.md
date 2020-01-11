@@ -16,18 +16,19 @@ dragons.
 
 ## Functions
  + CPrintToChat(int client, const char[] message, any ...)
- + CPrintToChatAll(const char[] message, an ...)
+ + CPrintToChatAll(const char[] message, any ...)
  + CPrintToChatEx(int client, int author, const char[] message, any ...)
  + CPrintToChatAllEx(int author, const char[] message, any ...)
  + CReplyToCommand(int author, const char[] message, any ...)
  + CReplyToCommandEx(int client, int author, const char[] message, any ...)
  + ~~CShowActivity(int author, const char[] message, any ...)~~
- + ~~CShowActivityEx(int author, const String:tag[], const char[] message, any ...)~~
- + ~~CShowActivity2(int author, const String:tag[], cconst char[] message, any ...)~~
+ + ~~CShowActivityEx(int author, const char[] tag, const char[] message, any ...)~~
+ + ~~CShowActivity2(int author, const char[] tag, cconst char[] message, any ...)~~
  + CPrintToServer(const char[] message, any ...)
  + ~~CFormatColor(char[] message, int maxlength, int author = -1)~~
- + CRemoveTags(char[] message, int maxlen)
- + ~~CSetPrefix(const char[] sPrefix, any ...)~~
+ + CFormat(char[] message, int maxlength, int author = -1)
+ + CRemoveTags(char[] message, int maxlength)
+ + ~~CSetPrefix(const char[] prefix, any ...)~~
  + ~~CClearPrefix()~~
 
 ## Performance
