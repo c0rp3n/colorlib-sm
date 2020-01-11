@@ -1,0 +1,8 @@
+*.smx
+*.project
+
+.vscode/
+.idea/
+
+*.exe 
+*.dat

@@ -8,7 +8,13 @@
 ColorLib is built as a replacement for Colors, it uses a a less naive approach
 to formatting messages to drastically improve the performance of C* functions.
 
-### Functions
+## Status
+
+This project is still under active development and has not yet reached a stable
+version until v1.0.0 So when using this code currently expect random error and
+dragons.
+
+## Functions
  + CPrintToChat(int client, const char[] message, any ...)
  + CPrintToChatAll(const char[] message, an ...)
  + CPrintToChatEx(int client, int author, const char[] message, any ...)
@@ -24,14 +30,14 @@ to formatting messages to drastically improve the performance of C* functions.
  + CSetPrefix(const char[] sPrefix, any ...)
  + CClearPrefix()
 
-### Performance
+## Performance
 To be measured.
 
-### Links
+## Links
  + Multi-Colors: https://github.com/Bara/Multi-Colors
  + Stamm-Colors: https://github.com/popoklopsi/Stamm/blob/master/include/stamm/stamm-colors.inc
  + Colors: https://forums.alliedmods.net/showthread.php?t=96831
  + More Colors: https://forums.alliedmods.net/showthread.php?t=185016
 
-### Download
+## Download
  + https://github.com/c0rp3n/colorlib
