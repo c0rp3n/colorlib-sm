@@ -22,7 +22,23 @@ COLORS = [
     ('green',       0x04),
     ('lime',        0x06),
     ('grey',        0x08),
-    ('grey2',       0x0D)
+    ('grey2',       0x0D),
+    ("engine 1",    0x01),
+    ("engine 2",    0x02),
+    ("engine 3",    0x03),
+    ("engine 4",    0x04),
+    ("engine 5",    0x05),
+    ("engine 6",    0x06),
+    ("engine 7",    0x07),
+    ("engine 8",    0x08),
+    ("engine 9",    0x09),
+    ("engine 10",   0x0A),
+    ("engine 11",   0x0B),
+    ("engine 12",   0x0C),
+    ("engine 13",   0x0D),
+    ("engine 14",   0x0E),
+    ("engine 15",   0x0F),
+    ("engine 16",   0x10)
     ]
 
 TAB = "    "
@@ -136,7 +152,7 @@ def group_by_char_at(colors : list, i : int = 0) -> dict:
 def create_enum() -> str:
     ev = []
     for color in COLORS:
-        name = 'CL_Color_' + color[0].capitalize()
+        name = 'CL_Color_' + color[0].replace(' ', '_').capitalize()
         value = hex(color[1])
         color_enum_names[color[0]] = name
         ev.append(ENUM_ENTRY_DEF.format(name, value))
@@ -175,8 +191,6 @@ def create_elif(depth : int, key, ret : str) -> str:
 def create_decision(group : dict, depth : int = 0) -> str:
     decisions = ""
     for i, (key, value) in enumerate(group.items()):
-        print('\'' + str(key) + '\': ' + str(value))
-        print(type(value))
         if isinstance(value, dict):
             body = create_decision(value, depth + 1)
         else:

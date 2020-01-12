@@ -29,6 +29,22 @@ enum CL_Colors
     CL_Color_Lime = 0x6,
     CL_Color_Grey = 0x8,
     CL_Color_Grey2 = 0xd,
+    CL_Color_Engine_1 = 0x1,
+    CL_Color_Engine_2 = 0x2,
+    CL_Color_Engine_3 = 0x3,
+    CL_Color_Engine_4 = 0x4,
+    CL_Color_Engine_5 = 0x5,
+    CL_Color_Engine_6 = 0x6,
+    CL_Color_Engine_7 = 0x7,
+    CL_Color_Engine_8 = 0x8,
+    CL_Color_Engine_9 = 0x9,
+    CL_Color_Engine_10 = 0xa,
+    CL_Color_Engine_11 = 0xb,
+    CL_Color_Engine_12 = 0xc,
+    CL_Color_Engine_13 = 0xd,
+    CL_Color_Engine_14 = 0xe,
+    CL_Color_Engine_15 = 0xf,
+    CL_Color_Engine_16 = 0x10,
 };
 
 CL_Colors _CL_ColorMap(char color[16])
@@ -157,6 +173,94 @@ CL_Colors _CL_ColorMap(char color[16])
                     else if (color[4] == '2')
                     {
                         return CL_Color_Grey2;
+                    }
+                }
+            }
+        }
+    }
+    else if (color[0] == 'e')
+    {
+        if (color[1] == 'n')
+        {
+            if (color[2] == 'g')
+            {
+                if (color[3] == 'i')
+                {
+                    if (color[4] == 'n')
+                    {
+                        if (color[5] == 'e')
+                        {
+                            if (color[6] == ' ')
+                            {
+                                if (color[7] == '1')
+                                {
+                                    if (color[8] == 0x0)
+                                    {
+                                        return CL_Color_Engine_1;
+                                    }
+                                    else if (color[8] == '0')
+                                    {
+                                        return CL_Color_Engine_10;
+                                    }
+                                    else if (color[8] == '1')
+                                    {
+                                        return CL_Color_Engine_11;
+                                    }
+                                    else if (color[8] == '2')
+                                    {
+                                        return CL_Color_Engine_12;
+                                    }
+                                    else if (color[8] == '3')
+                                    {
+                                        return CL_Color_Engine_13;
+                                    }
+                                    else if (color[8] == '4')
+                                    {
+                                        return CL_Color_Engine_14;
+                                    }
+                                    else if (color[8] == '5')
+                                    {
+                                        return CL_Color_Engine_15;
+                                    }
+                                    else if (color[8] == '6')
+                                    {
+                                        return CL_Color_Engine_16;
+                                    }
+                                }
+                                else if (color[7] == '2')
+                                {
+                                    return CL_Color_Engine_2;
+                                }
+                                else if (color[7] == '3')
+                                {
+                                    return CL_Color_Engine_3;
+                                }
+                                else if (color[7] == '4')
+                                {
+                                    return CL_Color_Engine_4;
+                                }
+                                else if (color[7] == '5')
+                                {
+                                    return CL_Color_Engine_5;
+                                }
+                                else if (color[7] == '6')
+                                {
+                                    return CL_Color_Engine_6;
+                                }
+                                else if (color[7] == '7')
+                                {
+                                    return CL_Color_Engine_7;
+                                }
+                                else if (color[7] == '8')
+                                {
+                                    return CL_Color_Engine_8;
+                                }
+                                else if (color[7] == '9')
+                                {
+                                    return CL_Color_Engine_9;
+                                }
+                            }
+                        }
                     }
                 }
             }
