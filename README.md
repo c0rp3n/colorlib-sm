@@ -14,6 +14,11 @@ This project is still under active development and has not yet reached a stable
 version until v1.0.0 So when using this code currently expect random error and
 dragons.
 
+## Performance
+### CPrintToChat
+ + ColorLib - Time needed for 10000 messages: 0.061606
+ + Multi-Colors - Time needed for 10000 messages: 0.155233
+
 ## Functions
  + CPrintToChat(int client, const char[] message, any ...)
  + CPrintToChatAll(const char[] message, any ...)
@@ -30,9 +35,6 @@ dragons.
  + CRemoveTags(char[] message, int maxlength)
  + ~~CSetPrefix(const char[] prefix, any ...)~~
  + ~~CClearPrefix()~~
-
-## Performance
-To be measured.
 
 ## Links
  + Multi-Colors: https://github.com/Bara/Multi-Colors
