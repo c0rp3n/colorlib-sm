@@ -15,10 +15,8 @@
 #define CL_CheckClientIndex(%1) if (%1 <= 0 || %1 > MaxClients) ThrowError("Invalid client index %d", %1)
 #define CL_CheckClientIsIngame(%1) if (!IsClientInGame(%1)) ThrowError("Client %d is not in game", %1)
 
-/* C_Colors' properties */
+/* CL_Colors' properties */
 bool _CL_SkipList[MAXPLAYERS + 1] = { false, ... };
-
-static Handle sm_show_activity = null;
 
 /**
  * Prints a message to a specific client in the chat area.
@@ -322,7 +320,6 @@ stock int CFormat(char[] message, int maxlength, int author = NO_INDEX)
                 ++i;
             }
 
-            PrintToServer(color);
             buffer[index] = view_as<char>(_CL_ColorMap(color));
             ++index;
         }
