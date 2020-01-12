@@ -43,6 +43,91 @@ stock void CPrintToChat(int client, const char[] message, any ...)
 }
 
 /**
+ * Prints a message to a specific client in the chat area.
+ * Supports color tags and teamcolor tag.
+ *
+ * @param client    Client index.
+ * @param author    Author index whose color will be used for teamcolor tag.
+ * @param message   Message (formatting rules).
+ * @return          No return
+ * 
+ * On error/Errors: If the client or author are not connected an error will be thrown.
+ */
+stock void CPrintToChatEx(int client, int author, const char[] message, any ...)
+{
+    CL_CheckClientIndex(client);
+    CL_CheckClientIsIngame(client);
+    CL_CheckClientIndex(author);
+
+    SetGlobalTransTarget(client);
+
+    char buffer[MAX_MESSAGE_LENGTH];
+    int buffer_index = CPreFormat(buffer);
+    VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
+    CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
+    PrintToChat(client, buffer);
+}
+
+/**
+ * Prints a message to all clients in the chat area.
+ * Supports color tags.
+ *
+ * @param client    Client index.
+ * @param message   Message (formatting rules)
+ * @return          No return
+ */
+stock void CPrintToChatAll(const char[] message, any ...)
+{
+    char buffer[MAX_MESSAGE_LENGTH];
+    int buffer_index = CPreFormat(buffer);
+    CL_LoopClients(i)
+    {
+        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
+        {
+            SetGlobalTransTarget(i);
+
+            VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 2);
+            CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+            PrintToChat(i, buffer);
+        }
+
+        _CL_SkipList[i] = false;
+    }
+}
+
+/**
+ * Prints a message to all clients in the chat area.
+ * Supports color tags and teamcolor tag.
+ *
+ * @param author    Author index whos color will be used for teamcolor tag.
+ * @param message   Message (formatting rules).
+ * @return          No return
+ * 
+ * On error/Errors: If the author is not connected an error will be thrown.
+ */
+stock void CPrintToChatAllEx(int author, const char[] message, any ...)
+{
+    CL_CheckClientIndex(author);
+    CL_CheckClientIsIngame(author);
+
+    char buffer[MAX_MESSAGE_LENGTH];
+    int buffer_index = CPreFormat(buffer);
+    CL_LoopClients(i)
+    {
+        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
+        {
+            SetGlobalTransTarget(i);
+
+            VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 3);
+            CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
+            PrintToChat(i, buffer);
+        }
+
+        _CL_SkipList[i] = false;
+    }
+}
+
+/**
  * Reples to a message in a command. A client index of 0 will use PrintToServer().
  * If the command was from the console, PrintToConsole() is used. If the command was from chat, C_PrintToChat() is used.
  * Supports color tags.
@@ -116,91 +201,6 @@ stock void CReplyToCommandEx(int client, int author, const char[] message, any .
         VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
         CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
         PrintToChat(client, buffer);
-    }
-}
-
-/**
- * Prints a message to all clients in the chat area.
- * Supports color tags.
- *
- * @param client    Client index.
- * @param message   Message (formatting rules)
- * @return          No return
- */
-stock void CPrintToChatAll(const char[] message, any ...)
-{
-    char buffer[MAX_MESSAGE_LENGTH];
-    int buffer_index = CPreFormat(buffer);
-    CL_LoopClients(i)
-    {
-        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
-        {
-            SetGlobalTransTarget(i);
-
-            VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 3);
-            CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
-            PrintToChat(i, buffer);
-        }
-
-        _CL_SkipList[i] = false;
-    }
-}
-
-/**
- * Prints a message to a specific client in the chat area.
- * Supports color tags and teamcolor tag.
- *
- * @param client    Client index.
- * @param author    Author index whose color will be used for teamcolor tag.
- * @param message   Message (formatting rules).
- * @return          No return
- * 
- * On error/Errors: If the client or author are not connected an error will be thrown.
- */
-stock void CPrintToChatEx(int client, int author, const char[] message, any ...)
-{
-    CL_CheckClientIndex(client);
-    CL_CheckClientIsIngame(client);
-    CL_CheckClientIndex(author);
-
-    SetGlobalTransTarget(client);
-
-    char buffer[MAX_MESSAGE_LENGTH];
-    int buffer_index = CPreFormat(buffer);
-    VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
-    CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
-    PrintToChat(client, buffer);
-}
-
-/**
- * Prints a message to all clients in the chat area.
- * Supports color tags and teamcolor tag.
- *
- * @param author    Author index whos color will be used for teamcolor tag.
- * @param message   Message (formatting rules).
- * @return          No return
- * 
- * On error/Errors: If the author is not connected an error will be thrown.
- */
-stock void CPrintToChatAllEx(int author, const char[] message, any ...)
-{
-    CL_CheckClientIndex(author);
-    CL_CheckClientIsIngame(author);
-
-    char buffer[MAX_MESSAGE_LENGTH];
-    int buffer_index = CPreFormat(buffer);
-    CL_LoopClients(i)
-    {
-        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
-        {
-            SetGlobalTransTarget(i);
-
-            VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
-            CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
-            PrintToChat(i, buffer);
-        }
-
-        _CL_SkipList[i] = false;
     }
 }
 
