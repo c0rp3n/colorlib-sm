@@ -22,9 +22,9 @@ bool _CL_SkipList[MAXPLAYERS + 1] = { false, ... };
  * Prints a message to a specific client in the chat area.
  * Supports color tags.
  *
- * @param client	  Client index.
+ * @param client    Client index.
  * @param message   Message (formatting rules).
- * @return			  No return
+ * @return          No return
  * 
  * On error/Errors:   If the client is not connected an error will be thrown.
  */
@@ -51,10 +51,10 @@ stock void CPrintToChat(int client, const char[] message, any ...)
  * If the command was from the console, PrintToConsole() is used. If the command was from chat, C_PrintToChat() is used.
  * Supports color tags.
  *
- * @param client	  Client index, or 0 for server.
+ * @param client    Client index, or 0 for server.
  * @param message   Formatting rules.
- * @param ...         Variable number of format parameters.
- * @return			  No return
+ * @param ...       Variable number of format parameters.
+ * @return          No return
  * 
  * On error/Errors:   If the client is not connected or invalid.
  */
@@ -86,11 +86,11 @@ stock void CReplyToCommand(int client, const char[] message, any ...)
  * If the command was from the console, PrintToConsole() is used. If the command was from chat, C_PrintToChat() is used.
  * Supports color tags.
  *
- * @param client	  Client index, or 0 for server.
- * @param author      Author index whose color will be used for teamcolor tag.
+ * @param client    Client index, or 0 for server.
+ * @param author    Author index whose color will be used for teamcolor tag.
  * @param message   Formatting rules.
- * @param ...         Variable number of format parameters.
- * @return			  No return
+ * @param ...       Variable number of format parameters.
+ * @return          No return
  * 
  * On error/Errors:   If the client is not connected or invalid.
  */
@@ -120,9 +120,9 @@ stock void CReplyToCommandEx(int client, int author, const char[] message, any .
  * Prints a message to all clients in the chat area.
  * Supports color tags.
  *
- * @param client	  Client index.
+ * @param client    Client index.
  * @param message   Message (formatting rules)
- * @return			  No return
+ * @return          No return
  */
 stock void CPrintToChatAll(const char[] message, any ...)
 {
@@ -146,12 +146,12 @@ stock void CPrintToChatAll(const char[] message, any ...)
  * Prints a message to a specific client in the chat area.
  * Supports color tags and teamcolor tag.
  *
- * @param client	  Client index.
- * @param author	  Author index whose color will be used for teamcolor tag.
+ * @param client    Client index.
+ * @param author    Author index whose color will be used for teamcolor tag.
  * @param message   Message (formatting rules).
- * @return			  No return
+ * @return          No return
  * 
- * On error/Errors:   If the client or author are not connected an error will be thrown.
+ * On error/Errors: If the client or author are not connected an error will be thrown.
  */
 stock void CPrintToChatEx(int client, int author, const char[] message, any ...)
 {
@@ -176,11 +176,11 @@ stock void CPrintToChatEx(int client, int author, const char[] message, any ...)
  * Prints a message to all clients in the chat area.
  * Supports color tags and teamcolor tag.
  *
- * @param author	  Author index whos color will be used for teamcolor tag.
+ * @param author    Author index whos color will be used for teamcolor tag.
  * @param message   Message (formatting rules).
- * @return			  No return
+ * @return          No return
  * 
- * On error/Errors:   If the author is not connected an error will be thrown.
+ * On error/Errors: If the author is not connected an error will be thrown.
  */
 stock void CPrintToChatAllEx(int author, const char[] message, any ...)
 {
@@ -203,13 +203,19 @@ stock void CPrintToChatAllEx(int author, const char[] message, any ...)
     }
 }
 
+/**
+ * Replaces PrintToServer.
+ * Removes color tags.
+ *
+ * @param message   Formatting rules.
+ * @param ...       Variable number of format parameters.
+ * @return          No return
+ */
 stock void CPrintToServer(const char[] message, any ...)
 {
     char buffer[MAX_MESSAGE_LENGTH];
     VFormat(buffer, sizeof(buffer), message, 2);
-
     CRemoveTags(buffer, sizeof(buffer));
-
     PrintToServer(buffer);
 }
 
@@ -217,7 +223,7 @@ stock void CPrintToServer(const char[] message, any ...)
  * Removes color tags from the string.
  *
  * @param message   String.
- * @return			  No return
+ * @return          No return
  */
 stock void CRemoveTags(char[] message, int maxlength)
 {
@@ -250,8 +256,8 @@ stock void CRemoveTags(char[] message, int maxlength)
  * message to all clients. After message is printed client will
  * no more be skipped.
  * 
- * @param client   Client index
- * @return		   No return
+ * @param client    Client index
+ * @return          No return
  */
 stock void CSkipNextClient(int client)
 {
@@ -339,9 +345,9 @@ stock int CFormat(char[] message, int maxlength, int author = NO_INDEX)
  * Sends a SayText2 usermessage to a client
  *
  * @param message   Client index
- * @param maxlength   Author index
+ * @param maxlength Author index
  * @param message   Message
- * @return			  No return.
+ * @return          No return.
  */
 stock void C_SayText2(int client, int author, const char[] message)
 {
