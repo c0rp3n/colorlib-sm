@@ -116,6 +116,9 @@ def get_indent(i : int) -> str:
 
     return indent
 
+def get_hex(i : int) -> str:
+    return '0x' + '{:02x}'.format(i).upper()
+
 def get_indented_def(i : int, definition : str, first : bool = True) -> str:
     if first:
         indented_def = definition[0]
@@ -153,7 +156,7 @@ def create_enum() -> str:
     ev = []
     for color in COLORS:
         name = 'CL_Color_' + color[0].replace(' ', '_').capitalize()
-        value = hex(color[1])
+        value = get_hex(color[1])
         color_enum_names[color[0]] = name
         ev.append(ENUM_ENTRY_DEF.format(name, value))
 
