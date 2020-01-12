@@ -36,14 +36,10 @@ stock void CPrintToChat(int client, const char[] message, any ...)
     SetGlobalTransTarget(client);
 
     char buffer[MAX_MESSAGE_LENGTH];
-    buffer[0] = 0x01;
-    VFormat(buffer[1], sizeof(buffer) - 1, message, 3);
-
-    int index = CFormat(buffer, sizeof(buffer));
-    if (index == NO_INDEX)
-        PrintToChat(client, "%s", buffer);
-    else
-        C_SayText2(client, index, buffer);
+    int buffer_index = CPreFormat(buffer);
+    VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 3);
+    CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+    PrintToChat(client, buffer);
 }
 
 /**
@@ -63,21 +59,24 @@ stock void CReplyToCommand(int client, const char[] message, any ...)
     SetGlobalTransTarget(client);
 
     char buffer[MAX_MESSAGE_LENGTH];
-    VFormat(buffer, sizeof(buffer), message, 3);
-
     if (client == 0)
     {
+        VFormat(buffer, sizeof(buffer), message, 3);
         CRemoveTags(buffer, sizeof(buffer));
-        PrintToServer("%s", buffer);
+        PrintToServer(buffer);
     }
     else if (GetCmdReplySource() == SM_REPLY_TO_CONSOLE)
     {
+        VFormat(buffer, sizeof(buffer), message, 3);
         CRemoveTags(buffer, sizeof(buffer));
-        PrintToConsole(client, "%s", buffer);
+        PrintToConsole(client, buffer);
     }
     else
     {
-        CPrintToChat(client, "%s", buffer);
+        int buffer_index = CPreFormat(buffer);
+        VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 3);
+        CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+        PrintToChat(client, buffer);
     }
 }
 
@@ -96,23 +95,27 @@ stock void CReplyToCommand(int client, const char[] message, any ...)
  */
 stock void CReplyToCommandEx(int client, int author, const char[] message, any ...)
 {
-    char buffer[MAX_MESSAGE_LENGTH];
     SetGlobalTransTarget(client);
-    VFormat(buffer, sizeof(buffer), message, 4);
 
+    char buffer[MAX_MESSAGE_LENGTH];
     if (client == 0)
     {
+        VFormat(buffer, sizeof(buffer), message, 4);
         CRemoveTags(buffer, sizeof(buffer));
         PrintToServer("%s", buffer);
     }
     else if (GetCmdReplySource() == SM_REPLY_TO_CONSOLE)
     {
+        VFormat(buffer, sizeof(buffer), message, 4);
         CRemoveTags(buffer, sizeof(buffer));
         PrintToConsole(client, "%s", buffer);
     }
     else
     {
-        CPrintToChatEx(client, author, "%s", buffer);
+        int buffer_index = CPreFormat(buffer);
+        VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
+        CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
+        PrintToChat(client, buffer);
     }
 }
 
@@ -133,9 +136,20 @@ stock void CPrintToChatAll(const char[] message, any ...)
         if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
         {
             SetGlobalTransTarget(i);
-            VFormat(buffer, sizeof(buffer), message, 2);
 
-            CPrintToChat(i, "%s", buffer);
+            int buffer_index = 1;
+            buffer[0] = 0x01;
+
+            // If CS:GO set invisible precolor
+            if (GetEngineVersion() == Engine_CSGO)
+            {
+                buffer[buffer_index] = ' ';
+                ++buffer_index;
+            }
+
+            VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 3);
+            CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+            PrintToChat(i, buffer);
         }
 
         _CL_SkipList[i] = false;
@@ -165,11 +179,8 @@ stock void CPrintToChatEx(int client, int author, const char[] message, any ...)
     buffer[0] = 0x01;
     VFormat(buffer[1], sizeof(buffer) - 1, message, 4);
 
-    int index = CFormat(buffer, sizeof(buffer), author);
-    if (index == NO_INDEX)
-        PrintToChat(client, "%s", buffer);
-    else
-        C_SayText2(client, author, buffer);
+    CFormat(buffer, sizeof(buffer), author);
+    PrintToChat(client, buffer);
 }
 
 /**
@@ -268,27 +279,39 @@ stock void CSkipNextClient(int client)
 }
 
 /**
- * Replaces color tags in a string with color codes
+ * Initialises the buffer for color formatting
  *
  * @param message   String.
- * @param maxlength   Maximum length of the string buffer.
- * @return			  Client index that can be used for SayText2 author index
- * 
- * On error/Errors:   If there is more then one team color is used an error will be thrown.
+ * @return          First free index in the array
  */
-stock int CFormat(char[] message, int maxlength, int author = NO_INDEX)
+stock int CPreFormat(char[] message)
 {
-    int iRandomPlayer = NO_INDEX;
+    int index = 1;
+    message[0] = 0x01;
 
-    int index = 0;
-    char buffer[250];
     // If CS:GO set invisible precolor
-    if (GetEngineVersion() == Engine_CSGO) 
+    if (GetEngineVersion() == Engine_CSGO)
     {
-        buffer[0] = ' ';
+        message[index] = ' ';
         ++index;
     }
 
+    return index;
+}
+
+/**
+ * Replaces color tags in a string with color codes
+ *
+ * @param message   String.
+ * @param maxlength Maximum length of the string buffer.
+ * @return          Client index that can be used for SayText2 author index
+ * 
+ * On error/Errors: If there is more then one team color is used an error will be thrown.
+ */
+stock void CFormat(char[] message, int maxlength, int author = NO_INDEX)
+{
+    int index = 0;
+    char buffer[250];
     for (int i = 0; i < maxlength; ++i)
     {
         if (message[i] == 0x00)
@@ -337,8 +360,6 @@ stock int CFormat(char[] message, int maxlength, int author = NO_INDEX)
     }
 
     strcopy(message, maxlength, buffer);
-
-    return iRandomPlayer;
 }
 
 /**
