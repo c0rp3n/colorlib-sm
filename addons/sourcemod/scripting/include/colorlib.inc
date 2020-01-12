@@ -130,22 +130,12 @@ stock void CReplyToCommandEx(int client, int author, const char[] message, any .
 stock void CPrintToChatAll(const char[] message, any ...)
 {
     char buffer[MAX_MESSAGE_LENGTH];
-
+    int buffer_index = CPreFormat(buffer);
     CL_LoopClients(i)
     {
         if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
         {
             SetGlobalTransTarget(i);
-
-            int buffer_index = 1;
-            buffer[0] = 0x01;
-
-            // If CS:GO set invisible precolor
-            if (GetEngineVersion() == Engine_CSGO)
-            {
-                buffer[buffer_index] = ' ';
-                ++buffer_index;
-            }
 
             VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 3);
             CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
@@ -173,13 +163,12 @@ stock void CPrintToChatEx(int client, int author, const char[] message, any ...)
     CL_CheckClientIsIngame(client);
     CL_CheckClientIndex(author);
 
-    char buffer[MAX_MESSAGE_LENGTH];
     SetGlobalTransTarget(client);
 
-    buffer[0] = 0x01;
-    VFormat(buffer[1], sizeof(buffer) - 1, message, 4);
-
-    CFormat(buffer, sizeof(buffer), author);
+    char buffer[MAX_MESSAGE_LENGTH];
+    int buffer_index = CPreFormat(buffer);
+    VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
+    CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
     PrintToChat(client, buffer);
 }
 
@@ -199,15 +188,16 @@ stock void CPrintToChatAllEx(int author, const char[] message, any ...)
     CL_CheckClientIsIngame(author);
 
     char buffer[MAX_MESSAGE_LENGTH];
-
+    int buffer_index = CPreFormat(buffer);
     CL_LoopClients(i)
     {
         if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
         {
             SetGlobalTransTarget(i);
-            VFormat(buffer, sizeof(buffer), message, 3);
 
-            CPrintToChatEx(i, author, "%s", buffer);
+            VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
+            CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
+            PrintToChat(i, buffer);
         }
 
         _CL_SkipList[i] = false;
