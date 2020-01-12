@@ -239,10 +239,29 @@ stock void CPrintToServer(const char[] message, any ...)
 stock void CRemoveTags(char[] message, int maxlength)
 {
     int index = 0;
-    char buffer[MAX_MESSAGE_LENGTH];
     for (int i = 0; i < maxlength; ++i)
     {
-        if (message[i] == '{')
+        if (message[i] == 0x00)
+        {
+            break;
+        }
+
+        if (message[i] == '\\')
+        {
+            ++i;
+            if (message[i] == '{')
+            {
+                message[index] = '{';
+            }
+            else
+            {
+                message[index] = '\\';
+                --i;
+            }
+
+            ++index;
+        }
+        else if (message[i] == '{')
         {
             ++i;
             while (message[i] != '}')
@@ -250,14 +269,14 @@ stock void CRemoveTags(char[] message, int maxlength)
                 ++i;
             }
         }
-        else
+        else if (index != i)
         {
-            buffer[index] = message[i];
+            message[index] = message[i];
             ++index;
         }
     }
 
-    strcopy(message, maxlength, buffer);
+    message[index] = 0x00;
 }
 
 /**
