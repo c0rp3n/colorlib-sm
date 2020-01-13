@@ -11,8 +11,6 @@
 #define NO_INDEX -1
 #define NO_PLAYER -2
 
-#define CL_LoopClients(%1) for (int %1 = 1; %1 <= MaxClients; ++%1)
-
 /* CL_Colors' properties */
 bool _CL_SkipList[MAXPLAYERS + 1] = { false, ... };
 
@@ -71,7 +69,7 @@ stock void CPrintToChatAll(const char[] message, any ...)
 {
     char buffer[MAX_MESSAGE_LENGTH];
     int buffer_index = CPreFormat(buffer);
-    CL_LoopClients(i)
+    for (int i = 1; i <= MaxClients; ++i)
     {
         if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
         {
@@ -100,7 +98,7 @@ stock void CPrintToChatAllEx(int author, const char[] message, any ...)
 {
     char buffer[MAX_MESSAGE_LENGTH];
     int buffer_index = CPreFormat(buffer);
-    CL_LoopClients(i)
+    for (int i = 1; i <= MaxClients; ++i)
     {
         if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
         {
