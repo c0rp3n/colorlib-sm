@@ -57,19 +57,13 @@ CL_Colors _CL_ColorMap(char color[16])
         }
         else if (color[1] == 'a')
         {
-            if (color[2] == 'r')
+            if (color[4] == 'r')
             {
-                if (color[3] == 'k')
-                {
-                    if (color[4] == 'r')
-                    {
-                        return CL_Color_Darkred;
-                    }
-                    else if (color[4] == 'b')
-                    {
-                        return CL_Color_Darkblue;
-                    }
-                }
+                return CL_Color_Darkred;
+            }
+            else if (color[4] == 'b')
+            {
+                return CL_Color_Darkblue;
             }
         }
     }
@@ -83,49 +77,31 @@ CL_Colors _CL_ColorMap(char color[16])
     }
     else if (color[0] == 'l')
     {
-        if (color[1] == 'i')
+        if (color[2] == 'g')
         {
-            if (color[2] == 'g')
+            if (color[5] == 'r')
             {
-                if (color[3] == 'h')
-                {
-                    if (color[4] == 't')
-                    {
-                        if (color[5] == 'r')
-                        {
-                            return CL_Color_Lightred;
-                        }
-                        else if (color[5] == 'g')
-                        {
-                            return CL_Color_Lightgreen;
-                        }
-                    }
-                }
+                return CL_Color_Lightred;
             }
-            else if (color[2] == 'm')
+            else if (color[5] == 'g')
             {
-                return CL_Color_Lime;
+                return CL_Color_Lightgreen;
             }
+        }
+        else if (color[2] == 'm')
+        {
+            return CL_Color_Lime;
         }
     }
     else if (color[0] == 'b')
     {
-        if (color[1] == 'l')
+        if (color[4] == 'g')
         {
-            if (color[2] == 'u')
-            {
-                if (color[3] == 'e')
-                {
-                    if (color[4] == 'g')
-                    {
-                        return CL_Color_Bluegrey;
-                    }
-                    else if (color[4] == 0x0)
-                    {
-                        return CL_Color_Blue;
-                    }
-                }
-            }
+            return CL_Color_Bluegrey;
+        }
+        else if (color[4] == 0x0)
+        {
+            return CL_Color_Blue;
         }
     }
     else if (color[0] == 'p')
@@ -134,16 +110,13 @@ CL_Colors _CL_ColorMap(char color[16])
     }
     else if (color[0] == 'o')
     {
-        if (color[1] == 'r')
+        if (color[2] == 'c')
         {
-            if (color[2] == 'c')
-            {
-                return CL_Color_Orchid;
-            }
-            else if (color[2] == 'a')
-            {
-                return CL_Color_Orange;
-            }
+            return CL_Color_Orchid;
+        }
+        else if (color[2] == 'a')
+        {
+            return CL_Color_Orange;
         }
     }
     else if (color[0] == 'y')
@@ -158,112 +131,91 @@ CL_Colors _CL_ColorMap(char color[16])
         }
         else if (color[1] == 'r')
         {
-            if (color[2] == 'e')
+            if (color[3] == 'e')
             {
-                if (color[3] == 'e')
+                return CL_Color_Green;
+            }
+            else if (color[3] == 'y')
+            {
+                if (color[4] == 0x0)
                 {
-                    return CL_Color_Green;
+                    return CL_Color_Grey;
                 }
-                else if (color[3] == 'y')
+                else if (color[4] == '2')
                 {
-                    if (color[4] == 0x0)
-                    {
-                        return CL_Color_Grey;
-                    }
-                    else if (color[4] == '2')
-                    {
-                        return CL_Color_Grey2;
-                    }
+                    return CL_Color_Grey2;
                 }
             }
         }
     }
     else if (color[0] == 'e')
     {
-        if (color[1] == 'n')
+        if (color[7] == '1')
         {
-            if (color[2] == 'g')
+            if (color[8] == 0x0)
             {
-                if (color[3] == 'i')
-                {
-                    if (color[4] == 'n')
-                    {
-                        if (color[5] == 'e')
-                        {
-                            if (color[6] == ' ')
-                            {
-                                if (color[7] == '1')
-                                {
-                                    if (color[8] == 0x0)
-                                    {
-                                        return CL_Color_Engine_1;
-                                    }
-                                    else if (color[8] == '0')
-                                    {
-                                        return CL_Color_Engine_10;
-                                    }
-                                    else if (color[8] == '1')
-                                    {
-                                        return CL_Color_Engine_11;
-                                    }
-                                    else if (color[8] == '2')
-                                    {
-                                        return CL_Color_Engine_12;
-                                    }
-                                    else if (color[8] == '3')
-                                    {
-                                        return CL_Color_Engine_13;
-                                    }
-                                    else if (color[8] == '4')
-                                    {
-                                        return CL_Color_Engine_14;
-                                    }
-                                    else if (color[8] == '5')
-                                    {
-                                        return CL_Color_Engine_15;
-                                    }
-                                    else if (color[8] == '6')
-                                    {
-                                        return CL_Color_Engine_16;
-                                    }
-                                }
-                                else if (color[7] == '2')
-                                {
-                                    return CL_Color_Engine_2;
-                                }
-                                else if (color[7] == '3')
-                                {
-                                    return CL_Color_Engine_3;
-                                }
-                                else if (color[7] == '4')
-                                {
-                                    return CL_Color_Engine_4;
-                                }
-                                else if (color[7] == '5')
-                                {
-                                    return CL_Color_Engine_5;
-                                }
-                                else if (color[7] == '6')
-                                {
-                                    return CL_Color_Engine_6;
-                                }
-                                else if (color[7] == '7')
-                                {
-                                    return CL_Color_Engine_7;
-                                }
-                                else if (color[7] == '8')
-                                {
-                                    return CL_Color_Engine_8;
-                                }
-                                else if (color[7] == '9')
-                                {
-                                    return CL_Color_Engine_9;
-                                }
-                            }
-                        }
-                    }
-                }
+                return CL_Color_Engine_1;
             }
+            else if (color[8] == '0')
+            {
+                return CL_Color_Engine_10;
+            }
+            else if (color[8] == '1')
+            {
+                return CL_Color_Engine_11;
+            }
+            else if (color[8] == '2')
+            {
+                return CL_Color_Engine_12;
+            }
+            else if (color[8] == '3')
+            {
+                return CL_Color_Engine_13;
+            }
+            else if (color[8] == '4')
+            {
+                return CL_Color_Engine_14;
+            }
+            else if (color[8] == '5')
+            {
+                return CL_Color_Engine_15;
+            }
+            else if (color[8] == '6')
+            {
+                return CL_Color_Engine_16;
+            }
+        }
+        else if (color[7] == '2')
+        {
+            return CL_Color_Engine_2;
+        }
+        else if (color[7] == '3')
+        {
+            return CL_Color_Engine_3;
+        }
+        else if (color[7] == '4')
+        {
+            return CL_Color_Engine_4;
+        }
+        else if (color[7] == '5')
+        {
+            return CL_Color_Engine_5;
+        }
+        else if (color[7] == '6')
+        {
+            return CL_Color_Engine_6;
+        }
+        else if (color[7] == '7')
+        {
+            return CL_Color_Engine_7;
+        }
+        else if (color[7] == '8')
+        {
+            return CL_Color_Engine_8;
+        }
+        else if (color[7] == '9')
+        {
+            return CL_Color_Engine_9;
         }
     }
 

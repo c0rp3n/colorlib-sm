@@ -152,6 +152,15 @@ def group_by_char_at(colors : list, i : int = 0) -> dict:
 
     return groups
 
+def skip_redundant_decisions(group : dict, indent : int, depth : int) -> str:
+    if len(group) == 1:
+        for (_, value) in  group.items():
+            body = skip_redundant_decisions(value, indent, depth + 1)
+    else:
+        body = create_decision(group, indent, depth)
+
+    return body
+
 def create_enum() -> str:
     ev = []
     for color in COLORS:
@@ -169,8 +178,9 @@ def create_enum() -> str:
 def create_return(color : str) -> str:
     return RETURN_DEF.format(color_enum_names[color])
 
-def create_statement(definition : str, 
-                     depth : int,
+def create_statement(definition : str,
+                     indent : int,
+                     index : int,
                      key,
                      ret : str,
                      first : bool = True) -> str:
@@ -180,29 +190,32 @@ def create_statement(definition : str,
         char = hex(key)
 
     return get_indented_def(
-        depth,
+        indent,
         definition,
         first
-        ).format(depth, char, ret)
+        ).format(index, char, ret)
 
-def create_if(depth : int, key, ret : str) -> str:
-    return create_statement(IF_DEF, depth, key, ret, True)
+def create_if(indent : int, index : int, key, ret : str) -> str:
+    return create_statement(IF_DEF, indent, index, key, ret, True)
 
-def create_elif(depth : int, key, ret : str) -> str:
-    return create_statement(ELIF_DEF, depth, key, ret, False)
+def create_elif(indent : int, index : int, key, ret : str) -> str:
+    return create_statement(ELIF_DEF, indent, index, key, ret, False)
 
-def create_decision(group : dict, depth : int = 0) -> str:
+def create_decision(group : dict, indent : int = 0, depth : int = 0) -> str:
     decisions = ""
     for i, (key, value) in enumerate(group.items()):
         if isinstance(value, dict):
-            body = create_decision(value, depth + 1)
+            if len(value) == 1:
+                body = skip_redundant_decisions(value, indent + 1, depth + 1)
+            else:
+                body = create_decision(value, indent + 1, depth + 1)
         else:
             body = create_return(value[0])
         
         if i == 0:
-            decisions = create_if(depth, key, body)
+            decisions = create_if(indent, depth, key, body)
         else:
-            decisions = decisions + create_elif(depth, key, body)
+            decisions = decisions + create_elif(indent, depth, key, body)
 
     return decisions
 
