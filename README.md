@@ -24,11 +24,14 @@ dragons.
  + CPrintToChatAll(const char[] message, any ...)
  + CPrintToChatEx(int client, int author, const char[] message, any ...)
  + CPrintToChatAllEx(int author, const char[] message, any ...)
+ + CPrintToChatTeam(int team, const char[] message, any ...)
+ + CPrintToChatTeamEx(int team, int author, const char[] message, any ...)
+ + CPrintToChatAdmins(int flags, const char[] message, any ...)
  + CReplyToCommand(int author, const char[] message, any ...)
  + CReplyToCommandEx(int client, int author, const char[] message, any ...)
- + ~~CShowActivity(int author, const char[] message, any ...)~~
- + ~~CShowActivityEx(int author, const char[] tag, const char[] message, any ...)~~
- + ~~CShowActivity2(int author, const char[] tag, cconst char[] message, any ...)~~
+ + CShowActivity(int author, const char[] message, any ...)
+ + CShowActivityEx(int author, const char[] tag, const char[] message, any ...)
+ + CShowActivity2(int author, const char[] tag, cconst char[] message, any ...)
  + CPrintToServer(const char[] message, any ...)
  + ~~CFormatColor(char[] message, int maxlength, int author = -1)~~
  + CFormat(char[] message, int maxlength, int author = -1)

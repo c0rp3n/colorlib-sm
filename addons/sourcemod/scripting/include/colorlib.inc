@@ -37,7 +37,7 @@ stock void CPrintToChat(int client, const char[] message, any ...)
 
 /**
  * Prints a message to a specific client in the chat area.
- * Supports color tags and teamcolor tag.
+ * Supports color tags.
  *
  * @param client    Client index.
  * @param author    Author index whose color will be used for teamcolor tag.
@@ -86,7 +86,7 @@ stock void CPrintToChatAll(const char[] message, any ...)
 
 /**
  * Prints a message to all clients in the chat area.
- * Supports color tags and teamcolor tag.
+ * Supports color tags.
  *
  * @param author    Author index whos color will be used for teamcolor tag.
  * @param message   Message (formatting rules).
@@ -107,6 +107,108 @@ stock void CPrintToChatAllEx(int author, const char[] message, any ...)
             VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 3);
             CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
             PrintToChat(i, buffer);
+        }
+
+        _CL_SkipList[i] = false;
+    }
+}
+
+/**
+ * Prints a message to all clients on a specific team.
+ * Supports color tags.
+ *
+ * @param team      Team index.
+ * @param message   Message (formatting rules).
+ * @return          No return
+ * 
+ * On error/Errors:   If the client is not connected an error will be thrown.
+ */
+stock void CPrintToChatTeam(int team, const char[] message, any ...)
+{
+    char buffer[MAX_MESSAGE_LENGTH];
+    int buffer_index = CPreFormat(buffer);
+    for (int i = 1; i <= MaxClients; ++i)
+    {
+        if (i > 0 &&
+            IsClientInGame(i) &&
+            !IsFakeClient(i) &&
+            !_CL_SkipList[i] &&
+            GetClientTeam(i) == team)
+        {
+            SetGlobalTransTarget(i);
+
+            VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 3);
+            CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+            PrintToChat(i, buffer);
+        }
+
+        _CL_SkipList[i] = false;
+    }
+}
+
+/**
+ * Prints a message to all clients on a specific team.
+ * Supports color tags.
+ *
+ * @param team      Team index.
+ * @param author    Author index whos color will be used for teamcolor tag.
+ * @param message   Message (formatting rules).
+ * @return          No return
+ * 
+ * On error/Errors:   If the client is not connected an error will be thrown.
+ */
+stock void CPrintToChatTeamEx(int team, int author, const char[] message, any ...)
+{
+    char buffer[MAX_MESSAGE_LENGTH];
+    int buffer_index = CPreFormat(buffer);
+    for (int i = 1; i <= MaxClients; ++i)
+    {
+        if (i > 0 &&
+            IsClientInGame(i) &&
+            !IsFakeClient(i) &&
+            !_CL_SkipList[i] &&
+            GetClientTeam(i) == team)
+        {
+            SetGlobalTransTarget(i);
+
+            VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
+            CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
+            PrintToChat(i, buffer);
+        }
+
+        _CL_SkipList[i] = false;
+    }
+}
+
+/**
+ * Prints a message to all admins with the given access flags.
+ * Supports color tags.
+ *
+ * @param flags     Admin flags.
+ * @param message   Message (formatting rules).
+ * @return          No return
+ * 
+ * On error/Errors:   If the client is not connected an error will be thrown.
+ */
+stock void CPrintToChatAdmins(int flags, const char[] message, any ...)
+{
+    char buffer[MAX_MESSAGE_LENGTH];
+    int buffer_index = CPreFormat(buffer);
+    AdminId admin_id;
+    for (int i = 1; i <= MaxClients; ++i)
+    {
+        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
+        {
+            admin_id = GetUserAdmin(i);
+            if (admin_id == INVALID_ADMIN_ID &&
+                CheckAccess(admin_id, "", flags, true))
+            {
+                SetGlobalTransTarget(i);
+
+                VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 3);
+                CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+                PrintToChat(i, buffer);
+            }
         }
 
         _CL_SkipList[i] = false;
@@ -188,6 +290,85 @@ stock void CReplyToCommandEx(int client, int author, const char[] message, any .
         CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
         PrintToChat(client, buffer);
     }
+}
+
+/**
+ * Displays usage of an admin command to users depending on the setting of the sm_show_activity cvar.
+ * This version does not display a message to the originating client if used from chat triggers or menus. If manual replies are used for these cases, then this function will suffice. Otherwise, ShowActivity2() is slightly more useful.
+ * Supports color tags.
+ *
+ * @param client    Client index, or 0 for server.
+ * @param message   Formatting rules.
+ * @param ...       Variable number of format parameters.
+ * @return          No return
+ * 
+ * On error/Errors:   If the client is not connected or invalid.
+ */
+stock void CShowActivity(int client, const char[] message, any ...)
+{
+    SetGlobalTransTarget(client);
+
+    char buffer[MAX_MESSAGE_LENGTH];
+    int buffer_index = CPreFormat(buffer);
+    VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 3);
+    CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+    ShowActivity(client, buffer);
+}
+
+/**
+ * Displays usage of an admin command to users depending on the setting of the sm_show_activity cvar. All users receive a message in their chat text, except for the originating client, who receives the message based on the current ReplySource.
+ * Supports color tags.
+ *
+ * @param client    Client index, or 0 for server.
+ * @param message   Formatting rules.
+ * @param ...       Variable number of format parameters.
+ * @return          No return
+ * 
+ * On error/Errors:   If the client is not connected or invalid.
+ */
+stock void CShowActivity2(int client, const char[] tag, const char[] message, any ...)
+{
+    SetGlobalTransTarget(client);
+
+    char buffer[MAX_MESSAGE_LENGTH], buffer_tag[MAX_MESSAGE_LENGTH];
+
+    int tag_index = CPreFormat(buffer_tag);
+    strcopy(buffer_tag[tag_index], sizeof(buffer_tag) - tag_index, tag);
+    CFormat(buffer_tag[tag_index], sizeof(buffer_tag) - tag_index);
+
+    int buffer_index = CPreFormat(buffer);
+    VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
+    CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+
+    ShowActivity2(client, buffer_tag, buffer);
+}
+
+/**
+ * Same as ShowActivity(), except the tag parameter is used instead of "[SM] " (note that you must supply any spacing).
+ * Supports color tags.
+ *
+ * @param client    Client index, or 0 for server.
+ * @param message   Formatting rules.
+ * @param ...       Variable number of format parameters.
+ * @return          No return
+ * 
+ * On error/Errors:   If the client is not connected or invalid.
+ */
+stock void CShowActivityEx(int client, const char[] tag, const char[] message, any ...)
+{
+    SetGlobalTransTarget(client);
+
+    char buffer[MAX_MESSAGE_LENGTH], buffer_tag[MAX_MESSAGE_LENGTH];
+
+    int tag_index = CPreFormat(buffer_tag);
+    strcopy(buffer_tag[tag_index], sizeof(buffer_tag) - tag_index, tag);
+    CFormat(buffer_tag[tag_index], sizeof(buffer_tag) - tag_index);
+
+    int buffer_index = CPreFormat(buffer);
+    VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
+    CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index);
+
+    ShowActivityEx(client, buffer_tag, buffer);
 }
 
 /**
