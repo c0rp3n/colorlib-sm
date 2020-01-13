@@ -12,8 +12,6 @@
 #define NO_PLAYER -2
 
 #define CL_LoopClients(%1) for (int %1 = 1; %1 <= MaxClients; ++%1)
-#define CL_CheckClientIndex(%1) if (%1 <= 0 || %1 > MaxClients) ThrowError("Invalid client index %d", %1)
-#define CL_CheckClientIsIngame(%1) if (!IsClientInGame(%1)) ThrowError("Client %d is not in game", %1)
 
 /* CL_Colors' properties */
 bool _CL_SkipList[MAXPLAYERS + 1] = { false, ... };
@@ -30,9 +28,6 @@ bool _CL_SkipList[MAXPLAYERS + 1] = { false, ... };
  */
 stock void CPrintToChat(int client, const char[] message, any ...)
 {
-    CL_CheckClientIndex(client);
-    CL_CheckClientIsIngame(client);
-
     SetGlobalTransTarget(client);
 
     char buffer[MAX_MESSAGE_LENGTH];
@@ -55,10 +50,6 @@ stock void CPrintToChat(int client, const char[] message, any ...)
  */
 stock void CPrintToChatEx(int client, int author, const char[] message, any ...)
 {
-    CL_CheckClientIndex(client);
-    CL_CheckClientIsIngame(client);
-    CL_CheckClientIndex(author);
-
     SetGlobalTransTarget(client);
 
     char buffer[MAX_MESSAGE_LENGTH];
@@ -107,9 +98,6 @@ stock void CPrintToChatAll(const char[] message, any ...)
  */
 stock void CPrintToChatAllEx(int author, const char[] message, any ...)
 {
-    CL_CheckClientIndex(author);
-    CL_CheckClientIsIngame(author);
-
     char buffer[MAX_MESSAGE_LENGTH];
     int buffer_index = CPreFormat(buffer);
     CL_LoopClients(i)
@@ -281,7 +269,7 @@ stock void CRemoveTags(char[] message, int maxlength)
  */
 stock void CSkipNextClient(int client)
 {
-    if (client <= 0 || client > MaxClients)
+    if (client < 1 || client > MaxClients)
         ThrowError("Invalid client index %d", client);
 
     _CL_SkipList[client] = true;
