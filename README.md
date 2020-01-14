@@ -10,9 +10,9 @@ to formatting messages to drastically improve the performance of C* functions.
 
 ## Status
 
-This project is still under active development and has not yet reached a stable
+*This project is still under active development and has not yet reached a stable
 version until v1.0.0 So when using this code currently expect random error and
-dragons.
+dragons.*
 
 ## Performance
 ### CPrintToChat
