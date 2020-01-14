@@ -118,7 +118,8 @@ RETURN_DEF = TAB + "return {};\n"
 color_enum_names = {}
 
 def get_indent(i : int) -> str:
-    if i < 1:
+    """Returns indentation to a given level."""
+    if i < 1: # no indentation needed
         return ""
     
     indent = TAB
@@ -128,20 +129,28 @@ def get_indent(i : int) -> str:
     return indent
 
 def get_hex(i : int) -> str:
+    """Returns a hex representation of a char."""
     return '0x' + '{:02x}'.format(i).upper()
 
 def get_indented_def(i : int, definition : str, first : bool = True) -> str:
+    """Returns an indented definition string."""
+    # if the first definition in a set do not indent the first line
     if first:
         indented_def = definition[0]
     else:
         indented_def = get_indent(i) + definition[0]
 
+    # indent the remaining lines
     for line in range(1, len(definition)):
         indented_def = indented_def + get_indent(i) + definition[line]
 
     return indented_def
 
 def group_till_unique(in_group : list, i : int = 0) -> dict:
+    """
+    Recursively splits a list into a tree,
+    where each node is a char in the leafs.
+    """
     if (len(in_group) <= 1):
         return in_group
 
@@ -152,9 +161,25 @@ def group_till_unique(in_group : list, i : int = 0) -> dict:
     return groups
 
 def group_by_char_at(colors : list, i : int = 0) -> dict:
+    """
+    Returns a dictionary of strings from a list,
+    grouped by the char at \'i\'.
+    """
+
+    # construnct a dictionary of strings
+    # examples:
+    # colors = ['default', 'darkred', 'red']
+    # group_by_char_at(colors, 0)
+    # { 'd': ['default', 'darkred'], 'r': ['red'] }
+    #
+    # colors = ['grey', 'grey2']
+    # group_by_char_at(colors, 4)
+    # { 0: ['grey'], '2': ['grey2'] }
+
     groups = {}
     for color in colors:
         if len(color) == i:
+            # index greater than length of string so use null terminator
             groups[0] = [color]
         elif color[i] in groups:
             groups[color[i]].append(color)
@@ -164,15 +189,25 @@ def group_by_char_at(colors : list, i : int = 0) -> dict:
     return groups
 
 def skip_redundant_decisions(group : dict, indent : int, depth : int) -> str:
+    """Optimisation step which skips none defining values."""
+
+    # example:
+    # colors = ['default','darkblue', 'darkred']
+    # group = { d: { a: { r: { k: { b: ['darkblue'], r: ['darkred'] } } } }, e: ['default'] }
+    # # for the given case we only need to check indexs [0,1] and then [4]
+    # # to uniquely identify a color
+    # # ['d', 'a', 'b'], ['d', 'a', 'r'], ['d', 'e']
+
     if len(group) == 1:
         for (_, value) in  group.items():
             body = skip_redundant_decisions(value, indent, depth + 1)
     else:
-        body = create_decision(group, indent, depth)
+        body = create_decisions(group, indent, depth)
 
     return body
 
 def create_enum() -> str:
+    """Creates the definition for the enum for the mapping function."""
     ev = []
     for color in COLORS:
         name = 'CL_Color_' + color[0].replace(' ', '_').capitalize()
@@ -187,6 +222,7 @@ def create_enum() -> str:
     return ENUM_DEF.format(enums)
 
 def create_return(color : str) -> str:
+    """Creates a return statement."""
     return RETURN_DEF.format(color_enum_names[color])
 
 def create_statement(definition : str,
@@ -195,6 +231,7 @@ def create_statement(definition : str,
                      key,
                      ret : str,
                      first : bool = True) -> str:
+    """Creates a statement (\'if\', \'else if\')."""
     if isinstance(key, str):
         char = CHAR_DEF.format(key)
     else:
@@ -207,19 +244,22 @@ def create_statement(definition : str,
         ).format(index, char, ret)
 
 def create_if(indent : int, index : int, key, ret : str) -> str:
+    """Creates an \'if\' statement."""
     return create_statement(IF_DEF, indent, index, key, ret, True)
 
 def create_elif(indent : int, index : int, key, ret : str) -> str:
+    """Creates an \'else if\' statement."""
     return create_statement(ELIF_DEF, indent, index, key, ret, False)
 
-def create_decision(group : dict, indent : int = 0, depth : int = 0) -> str:
+def create_decisions(group : dict, indent : int = 0, depth : int = 0) -> str:
+    """Creates the decisions for the mapping function."""
     decisions = ""
     for i, (key, value) in enumerate(group.items()):
         if isinstance(value, dict):
             if len(value) == 1:
                 body = skip_redundant_decisions(value, indent + 1, depth + 1)
             else:
-                body = create_decision(value, indent + 1, depth + 1)
+                body = create_decisions(value, indent + 1, depth + 1)
         else:
             body = create_return(value[0])
         
@@ -232,12 +272,11 @@ def create_decision(group : dict, indent : int = 0, depth : int = 0) -> str:
 
 
 def create_map() -> str:
-    # sorted_colors = sorted(COLORS)
-
+    """Creates the mapping function."""
     groups = group_till_unique([c[0] for c in COLORS])
 
     return COLOR_FUNCTION_DEF.format(
-        create_decision(groups), 
+        create_decisions(groups), 
         create_return('default')
         )
 
