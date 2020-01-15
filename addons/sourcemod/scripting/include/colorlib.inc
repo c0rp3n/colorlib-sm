@@ -11,8 +11,16 @@
 #define NO_INDEX -1
 #define NO_PLAYER -2
 
+enum _CL_ProtoBuff
+{
+    NotChecked = -1,
+    DoesNotSupport = 0,
+    Supports,
+}
+
 /* CL_Colors' properties */
-bool _CL_SkipList[MAXPLAYERS + 1] = { false, ... };
+_CL_ProtoBuff _CL_proto_buff_support = NotChecked;
+bool _CL_skip_list[MAXPLAYERS + 1] = { false, ... };
 
 /**
  * Prints a message to a specific client in the chat area.
@@ -54,7 +62,7 @@ stock void CPrintToChatEx(int client, int author, const char[] message, any ...)
     int buffer_index = CPreFormat(buffer);
     VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
     CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
-    PrintToChat(client, buffer);
+    _CL_SendChatMessage(client, author, buffer);
 }
 
 /**
@@ -71,7 +79,7 @@ stock void CPrintToChatAll(const char[] message, any ...)
     int buffer_index = CPreFormat(buffer);
     for (int i = 1; i <= MaxClients; ++i)
     {
-        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
+        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_skip_list[i])
         {
             SetGlobalTransTarget(i);
 
@@ -80,7 +88,7 @@ stock void CPrintToChatAll(const char[] message, any ...)
             PrintToChat(i, buffer);
         }
 
-        _CL_SkipList[i] = false;
+        _CL_skip_list[i] = false;
     }
 }
 
@@ -100,16 +108,16 @@ stock void CPrintToChatAllEx(int author, const char[] message, any ...)
     int buffer_index = CPreFormat(buffer);
     for (int i = 1; i <= MaxClients; ++i)
     {
-        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
+        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_skip_list[i])
         {
             SetGlobalTransTarget(i);
 
             VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 3);
             CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
-            PrintToChat(i, buffer);
+            _CL_SendChatMessage(i, author, buffer);
         }
 
-        _CL_SkipList[i] = false;
+        _CL_skip_list[i] = false;
     }
 }
 
@@ -132,7 +140,7 @@ stock void CPrintToChatTeam(int team, const char[] message, any ...)
         if (i > 0 &&
             IsClientInGame(i) &&
             !IsFakeClient(i) &&
-            !_CL_SkipList[i] &&
+            !_CL_skip_list[i] &&
             GetClientTeam(i) == team)
         {
             SetGlobalTransTarget(i);
@@ -142,7 +150,7 @@ stock void CPrintToChatTeam(int team, const char[] message, any ...)
             PrintToChat(i, buffer);
         }
 
-        _CL_SkipList[i] = false;
+        _CL_skip_list[i] = false;
     }
 }
 
@@ -166,17 +174,17 @@ stock void CPrintToChatTeamEx(int team, int author, const char[] message, any ..
         if (i > 0 &&
             IsClientInGame(i) &&
             !IsFakeClient(i) &&
-            !_CL_SkipList[i] &&
+            !_CL_skip_list[i] &&
             GetClientTeam(i) == team)
         {
             SetGlobalTransTarget(i);
 
             VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
             CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
-            PrintToChat(i, buffer);
+            _CL_SendChatMessage(i, author, buffer);
         }
 
-        _CL_SkipList[i] = false;
+        _CL_skip_list[i] = false;
     }
 }
 
@@ -197,7 +205,7 @@ stock void CPrintToChatAdmins(int flags, const char[] message, any ...)
     AdminId admin_id;
     for (int i = 1; i <= MaxClients; ++i)
     {
-        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_SkipList[i])
+        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_skip_list[i])
         {
             admin_id = GetUserAdmin(i);
             if (admin_id == INVALID_ADMIN_ID &&
@@ -211,7 +219,7 @@ stock void CPrintToChatAdmins(int flags, const char[] message, any ...)
             }
         }
 
-        _CL_SkipList[i] = false;
+        _CL_skip_list[i] = false;
     }
 }
 
@@ -288,7 +296,7 @@ stock void CReplyToCommandEx(int client, int author, const char[] message, any .
         int buffer_index = CPreFormat(buffer);
         VFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, message, 4);
         CFormat(buffer[buffer_index], sizeof(buffer) - buffer_index, author);
-        PrintToChat(client, buffer);
+        _CL_SendChatMessage(client, author, buffer);
     }
 }
 
@@ -451,7 +459,7 @@ stock void CSkipNextClient(int client)
     if (client < 1 || client > MaxClients)
         ThrowError("Invalid client index %d", client);
 
-    _CL_SkipList[client] = true;
+    _CL_skip_list[client] = true;
 }
 
 /**
@@ -539,18 +547,31 @@ stock void CFormat(char[] message, int maxlength, int author = NO_INDEX)
 }
 
 /**
+ * Checks for ProtoBuff support for CSayText2.
+ *
+ * @return          No return.
+ */
+stock bool _CL_SupportsProtoBuf()
+{
+    if (_CL_proto_buff_support == NotChecked)
+    {
+        _CL_proto_buff_support = (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available) && (GetUserMessageType() == UM_Protobuf) ? Supports : DoesNotSupport;
+    }
+    return _CL_proto_buff_support == Supports;
+}
+
+/**
  * Sends a SayText2 usermessage to a client
  *
  * @param message   Client index
- * @param maxlength Author index
+ * @param author    Author index
  * @param message   Message
  * @return          No return.
  */
-stock void C_SayText2(int client, int author, const char[] message)
+stock void CSayText2(int client, int author, const char[] message)
 {
     Handle hBuffer = StartMessageOne("SayText2", client, USERMSG_RELIABLE|USERMSG_BLOCKHOOKS);
-
-    if(GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available && GetUserMessageType() == UM_Protobuf) 
+    if(_CL_SupportsProtoBuf())
     {
         PbSetInt(hBuffer, "ent_idx", author);
         PbSetBool(hBuffer, "chat", true);
@@ -568,4 +589,24 @@ stock void C_SayText2(int client, int author, const char[] message)
     }
 
     EndMessage();
+}
+
+/**
+ * Sends a message to a client.
+ *
+ * @param message   Client index
+ * @param author    Author index
+ * @param message   Message
+ * @return          No return.
+ */
+stock void _CL_SendChatMessage(int client, int author, char[] message)
+{
+    if (author)
+    {
+        CSayText2(client, author, message);
+    }
+    else
+    {
+        PrintToChat(client, message);
+    }
 }

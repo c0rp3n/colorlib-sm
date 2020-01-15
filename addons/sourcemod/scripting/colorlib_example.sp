@@ -31,4 +31,6 @@ public Action Command_ColorLib(int client, int args)
     CShowActivityEx(client, "{green}[ColorLib]", "Command_ColorLib Usage: %s", "{red}CShowActivityEx");
 
     CPrintToServer("CPrintToServer - {darkblue}%s - {darkred}%s", "Test", "Test");
+
+    CSayText2(client, client, "{teamcolor}Hello");
 }
