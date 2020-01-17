@@ -4,53 +4,28 @@ import argparse
 import re
 import sys
 
-COLORS = [
-    ('default',     0x01),
-    ('prefix',      0x02),
-    ('reply2cmd',   0x01),
-    ('showactivity',0x01),
-    ('error',       0x03),
-    ('highlight',   0x02),
-    ('player',      0x02),
-    ('settings',    0x02),
-    ('command',     0x02),
-    ('team 0',       0x08),
-    ('team 1',       0x09),
-    ('team 2',       0x11),
-    ('teamcolor',   0x03),
-    ('red',         0x07),
-    ('lightred',    0x0F),
-    ('darkred',     0x02),
-    ('bluegrey',    0x0A),
-    ('blue',        0x0B),
-    ('darkblue',    0x0C),
-    ('purple',      0x03),
-    ('orchid',      0x0E),
-    ('orange',      0x10),
-    ('yellow',      0x09),
-    ('gold',        0x10),
-    ('lightgreen',  0x05),
-    ('green',       0x04),
-    ('lime',        0x06),
-    ('grey',        0x08),
-    ('grey2',       0x0D),
-    ('engine 1',    0x01),
-    ('engine 2',    0x02),
-    ('engine 3',    0x03),
-    ('engine 4',    0x04),
-    ('engine 5',    0x05),
-    ('engine 6',    0x06),
-    ('engine 7',    0x07),
-    ('engine 8',    0x08),
-    ('engine 9',    0x09),
-    ('engine 10',   0x0A),
-    ('engine 11',   0x0B),
-    ('engine 12',   0x0C),
-    ('engine 13',   0x0D),
-    ('engine 14',   0x0E),
-    ('engine 15',   0x0F),
-    ('engine 16',   0x10)
-    ]
+import yaml
+
+DEFAULT_COLOR = ('default', 0x01)
+
+COLORS = {
+    'engine 1':    0x01,
+    'engine 2':    0x02,
+    'engine 3':    0x03,
+    'engine 4':    0x04,
+    'engine 5':    0x05,
+    'engine 6':    0x06,
+    'engine 7':    0x07,
+    'engine 8':    0x08,
+    'engine 9':    0x09,
+    'engine 10':   0x0A,
+    'engine 11':   0x0B,
+    'engine 12':   0x0C,
+    'engine 13':   0x0D,
+    'engine 14':   0x0E,
+    'engine 15':   0x0F,
+    'engine 16':   0x10
+    }
 
 TAB = "    "
 
@@ -115,6 +90,7 @@ CHAR_DEF = "\'{}\'"
 
 RETURN_DEF = TAB + "return {};\n"
 
+colors = []
 color_enum_names = {}
 
 def get_indent(i : int) -> str:
@@ -209,7 +185,7 @@ def skip_redundant_decisions(group : dict, indent : int, depth : int) -> str:
 def create_enum() -> str:
     """Creates the definition for the enum for the mapping function."""
     ev = []
-    for color in COLORS:
+    for color in colors:
         name = 'CL_Color_' + color[0].replace(' ', '_').capitalize()
         value = get_hex(color[1])
         color_enum_names[color[0]] = name
@@ -273,15 +249,64 @@ def create_decisions(group : dict, indent : int = 0, depth : int = 0) -> str:
 
 def create_map() -> str:
     """Creates the mapping function."""
-    groups = group_till_unique([c[0] for c in COLORS])
+    groups = group_till_unique([c[0] for c in colors])
 
     return COLOR_FUNCTION_DEF.format(
         create_decisions(groups), 
         create_return('default')
         )
 
+def parse_config(file, include_ref_colors : bool):
+    """Parses ColorGen's the YAML config file."""
+    cfg = yaml.load(file, Loader=yaml.Loader)
+
+    ref_colors = {}
+    if 'ref_colors' in cfg:
+        for (key, value) in cfg['ref_colors'].items():
+            if isinstance(value, int):
+                ref_colors[key] = value
+            else:
+                assert value not in COLORS, 'value is not a default engine color or integer value' 
+                ref_colors[key] = COLORS[value]
+
+    for (key, value) in cfg['colors'].items():
+        if isinstance(value, int):
+            colors.append((key, value))
+        else:
+            if value in ref_colors:
+                colors.append((key, ref_colors[value]))
+            elif value in COLORS:
+                colors.append((key, COLORS[value]))
+    
+    if include_ref_colors:
+        for (key, value) in ref_colors.items():
+            colors.append((key, value))
+
+
+def add_default_colors():
+    for (key, value) in COLORS.items():
+            colors.append((key, value))
+
 def main():
     parser = argparse.ArgumentParser(description='ColorLib color map creator.')
+    parser.add_argument(
+        '-e',
+        '--include-engine-colors',
+        action="store_true",
+        dest='include_engine_colors'
+        )
+    parser.add_argument(
+        '-r',
+        '--include-ref-colors',
+        action="store_true",
+        dest='include_ref_colors'
+        )
+    parser.add_argument(
+        '--config',
+        dest='config',
+        type=argparse.FileType('r', encoding='UTF-8'),
+        help='config path \'{path to config dir}/color_conf.yaml\''
+        )
     parser.add_argument(
         'out',
         type=argparse.FileType('w', encoding='UTF-8'),
@@ -289,6 +314,14 @@ def main():
         )
 
     args = parser.parse_args()
+
+    if args.config != None:
+        parse_config(args.config, args.include_ref_colors)
+    else:
+        colors.append(DEFAULT_COLOR)
+    
+    if args.include_engine_colors or args.config == None:
+        add_default_colors()
 
     args.out.write(HEADER)
     args.out.write(create_enum())

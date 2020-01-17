@@ -12,12 +12,12 @@
 enum CL_Colors
 {
     CL_Color_Default = 0x01,
-    CL_Color_Prefix = 0x02,
+    CL_Color_Prefix = 0x04,
     CL_Color_Reply2cmd = 0x01,
     CL_Color_Showactivity = 0x01,
-    CL_Color_Error = 0x03,
-    CL_Color_Highlight = 0x02,
-    CL_Color_Player = 0x02,
+    CL_Color_Error = 0x07,
+    CL_Color_Highlight = 0x10,
+    CL_Color_Player = 0x09,
     CL_Color_Settings = 0x02,
     CL_Color_Command = 0x02,
     CL_Color_Team_0 = 0x08,
@@ -40,22 +40,6 @@ enum CL_Colors
     CL_Color_Lime = 0x06,
     CL_Color_Grey = 0x08,
     CL_Color_Grey2 = 0x0D,
-    CL_Color_Engine_1 = 0x01,
-    CL_Color_Engine_2 = 0x02,
-    CL_Color_Engine_3 = 0x03,
-    CL_Color_Engine_4 = 0x04,
-    CL_Color_Engine_5 = 0x05,
-    CL_Color_Engine_6 = 0x06,
-    CL_Color_Engine_7 = 0x07,
-    CL_Color_Engine_8 = 0x08,
-    CL_Color_Engine_9 = 0x09,
-    CL_Color_Engine_10 = 0x0A,
-    CL_Color_Engine_11 = 0x0B,
-    CL_Color_Engine_12 = 0x0C,
-    CL_Color_Engine_13 = 0x0D,
-    CL_Color_Engine_14 = 0x0E,
-    CL_Color_Engine_15 = 0x0F,
-    CL_Color_Engine_16 = 0x10,
 };
 
 CL_Colors _CL_ColorMap(char color[16])
@@ -117,80 +101,7 @@ CL_Colors _CL_ColorMap(char color[16])
     }
     else if (color[0] == 'e')
     {
-        if (color[1] == 'r')
-        {
-            return CL_Color_Error;
-        }
-        else if (color[1] == 'n')
-        {
-            if (color[7] == '1')
-            {
-                if (color[8] == 0x0)
-                {
-                    return CL_Color_Engine_1;
-                }
-                else if (color[8] == '0')
-                {
-                    return CL_Color_Engine_10;
-                }
-                else if (color[8] == '1')
-                {
-                    return CL_Color_Engine_11;
-                }
-                else if (color[8] == '2')
-                {
-                    return CL_Color_Engine_12;
-                }
-                else if (color[8] == '3')
-                {
-                    return CL_Color_Engine_13;
-                }
-                else if (color[8] == '4')
-                {
-                    return CL_Color_Engine_14;
-                }
-                else if (color[8] == '5')
-                {
-                    return CL_Color_Engine_15;
-                }
-                else if (color[8] == '6')
-                {
-                    return CL_Color_Engine_16;
-                }
-            }
-            else if (color[7] == '2')
-            {
-                return CL_Color_Engine_2;
-            }
-            else if (color[7] == '3')
-            {
-                return CL_Color_Engine_3;
-            }
-            else if (color[7] == '4')
-            {
-                return CL_Color_Engine_4;
-            }
-            else if (color[7] == '5')
-            {
-                return CL_Color_Engine_5;
-            }
-            else if (color[7] == '6')
-            {
-                return CL_Color_Engine_6;
-            }
-            else if (color[7] == '7')
-            {
-                return CL_Color_Engine_7;
-            }
-            else if (color[7] == '8')
-            {
-                return CL_Color_Engine_8;
-            }
-            else if (color[7] == '9')
-            {
-                return CL_Color_Engine_9;
-            }
-        }
+        return CL_Color_Error;
     }
     else if (color[0] == 'h')
     {
