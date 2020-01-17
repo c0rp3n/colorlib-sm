@@ -15,11 +15,57 @@ version until v1.0.0 So when using this code currently expect random error and
 dragons.*
 
 ## Performance
-### CPrintToChat
- - ColorLib - Time needed for 10000 messages: 0.061606
- - Multi-Colors - Time needed for 10000 messages: 0.155233
+#### CPrintToChat
+ - ColorLib - Time needed for 10000 messages: 0.0600535
+ - Multi-Colors - Time needed for 10000 messages: 0.114196
+#### CPrintToServer
+ - ColorLib - Time needed for 10000 messages: 0.037418‬
+ - Multi-Colors - Time needed for 10000 messages: 0.0842195‬
 
-## Functions
+## Usage
+### Color Lib
+Simply include colorlib and you should be good to go.
+
+*If previously using another color library make sure to no longer include it,
+and update the config and regenerate the `colorlib_map.inc` as show below with
+your old colors.*
+
+#### Example Usage
+```SourcePawn
+#pragma semicolon 1
+#pragma newdecls required
+
+#include <sourcemod>
+#include <colorlib>
+
+public void OnPluginStart()
+{
+    RegConsoleCmd("sm_colorlib", Command_ColorLib);
+}
+
+public Action Command_ColorLib(int client, int args)
+{
+    CPrintToChat(client, "CPrintToChat - {darkblue}%s - {darkred}%s", "Test", "Test");
+}
+```
+
+### Color Gen
+To change the output colors you first need to create a new or edit your config
+file.
+
+There is an example config file provided that it is recommended you copy from it
+can be seen [here](tools/example_conf.yaml).
+
+Then you can rerun `color_gen.py` to generate a new `colorlib_map.inc` to
+replace the default one provided.
+
+#### Example Usage
+```bash
+# for more info use ./color_gen.py -h
+./color_gen.py -r --config "./example_conf.yaml" "./colorlib_map.inc"
+```
+
+### Functions
 ```SourcePawn
 void CPrintToChat(int client, const char[] message, any ...)
 void CPrintToChatAll(const char[] message, any ...)
