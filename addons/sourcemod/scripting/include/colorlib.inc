@@ -570,22 +570,23 @@ stock bool _CL_SupportsProtoBuf()
  */
 stock void CSayText2(int client, int author, const char[] message)
 {
-    Handle hBuffer = StartMessageOne("SayText2", client, USERMSG_RELIABLE|USERMSG_BLOCKHOOKS);
-    if(_CL_SupportsProtoBuf())
+    if (_CL_SupportsProtoBuf())
     {
-        PbSetInt(hBuffer, "ent_idx", author);
-        PbSetBool(hBuffer, "chat", true);
-        PbSetString(hBuffer, "msg_name", message);
-        PbAddString(hBuffer, "params", "");
-        PbAddString(hBuffer, "params", "");
-        PbAddString(hBuffer, "params", "");
-        PbAddString(hBuffer, "params", "");
+        Protobuf pbMessage = view_as<Protobuf>(StartMessageOne("SayText2", client, USERMSG_RELIABLE|USERMSG_BLOCKHOOKS));
+        pbMessage.SetInt("ent_idx", author);
+        pbMessage.SetBool("chat", true);
+        pbMessage.SetString("msg_name", message);
+        pbMessage.SetString("params", "");
+        pbMessage.SetString("params", "");
+        pbMessage.SetString("params", "");
+        pbMessage.SetString("params", "");
     }
     else
     {
-        BfWriteByte(hBuffer, author);
-        BfWriteByte(hBuffer, true);
-        BfWriteString(hBuffer, message);
+        Handle hMessage = StartMessageOne("SayText2", client, USERMSG_RELIABLE|USERMSG_BLOCKHOOKS);
+        BfWriteByte(hMessage, author);
+        BfWriteByte(hMessage, true);
+        BfWriteString(hMessage, message);
     }
 
     EndMessage();
