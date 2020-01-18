@@ -65,6 +65,15 @@ replace the default one provided.
 ./color_gen.py -r --config "./example_conf.yaml" "./colorlib_map.inc"
 ```
 
+#### Example workflow example
+__Note:__ _This must executed before the plugins will be compiled._
+```yaml
+- name: Generate colorlib.inc
+  run: python3 ./color_gen.py -r --config "./example_conf.yaml" "../addons/sourcemod/scripting/include/colorlib_map.inc"
+  working-directory: ./tools
+```
+
+
 ### Functions
 ```SourcePawn
 void CPrintToChat(int client, const char[] message, any ...)
