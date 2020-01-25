@@ -65,7 +65,7 @@ replace the default one provided.
 ./color_gen.py -r --config "./example_conf.yaml" "./colorlib_map.inc"
 ```
 
-#### Example workflow example
+#### Example GitHub workflow
 __Note:__ _This must executed before the plugins will be compiled._
 ```yaml
 - name: Generate colorlib.inc
@@ -89,7 +89,7 @@ void CShowActivity(int author, const char[] message, any ...)
 void CShowActivityEx(int author, const char[] tag, const char[] message, any ...)
 void CShowActivity2(int author, const char[] tag, cconst char[] message, any ...)
 void CPrintToServer(const char[] message, any ...)
-int CPreFormat(char[] message, int maxlength)
+int  CPreFormat(char[] message, int maxlength)
 void CFormat(char[] message, int maxlength, int author = -1)
 void CRemoveTags(char[] message, int maxlength)
 ```
