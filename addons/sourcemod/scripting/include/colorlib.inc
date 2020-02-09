@@ -202,14 +202,11 @@ stock void CPrintToChatAdmins(int flags, const char[] message, any ...)
 {
     char buffer[MAX_MESSAGE_LENGTH];
     int buffer_index = CPreFormat(buffer);
-    AdminId admin_id;
     for (int i = 1; i <= MaxClients; ++i)
     {
         if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_skip_list[i])
         {
-            admin_id = GetUserAdmin(i);
-            if (admin_id == INVALID_ADMIN_ID &&
-                CheckAccess(admin_id, "", flags, true))
+            if (CheckCommandAccess(i, "colorlib_admin", flags, true))
             {
                 SetGlobalTransTarget(i);
 
