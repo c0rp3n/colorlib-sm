@@ -79,7 +79,7 @@ stock void CPrintToChatAll(const char[] message, any ...)
     int buffer_index = CPreFormat(buffer);
     for (int i = 1; i <= MaxClients; ++i)
     {
-        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_skip_list[i])
+        if (IsClientInGame(i) && !IsFakeClient(i) && !_CL_skip_list[i])
         {
             SetGlobalTransTarget(i);
 
@@ -108,7 +108,7 @@ stock void CPrintToChatAllEx(int author, const char[] message, any ...)
     int buffer_index = CPreFormat(buffer);
     for (int i = 1; i <= MaxClients; ++i)
     {
-        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_skip_list[i])
+        if (IsClientInGame(i) && !IsFakeClient(i) && !_CL_skip_list[i])
         {
             SetGlobalTransTarget(i);
 
@@ -137,8 +137,7 @@ stock void CPrintToChatTeam(int team, const char[] message, any ...)
     int buffer_index = CPreFormat(buffer);
     for (int i = 1; i <= MaxClients; ++i)
     {
-        if (i > 0 &&
-            IsClientInGame(i) &&
+        if (IsClientInGame(i) &&
             !IsFakeClient(i) &&
             !_CL_skip_list[i] &&
             GetClientTeam(i) == team)
@@ -171,8 +170,7 @@ stock void CPrintToChatTeamEx(int team, int author, const char[] message, any ..
     int buffer_index = CPreFormat(buffer);
     for (int i = 1; i <= MaxClients; ++i)
     {
-        if (i > 0 &&
-            IsClientInGame(i) &&
+        if (IsClientInGame(i) &&
             !IsFakeClient(i) &&
             !_CL_skip_list[i] &&
             GetClientTeam(i) == team)
@@ -204,7 +202,7 @@ stock void CPrintToChatAdmins(int flags, const char[] message, any ...)
     int buffer_index = CPreFormat(buffer);
     for (int i = 1; i <= MaxClients; ++i)
     {
-        if (i > 0 && IsClientInGame(i) && !IsFakeClient(i) && !_CL_skip_list[i])
+        if (IsClientInGame(i) && !IsFakeClient(i) && !_CL_skip_list[i])
         {
             if (CheckCommandAccess(i, "colorlib_admin", flags, true))
             {
