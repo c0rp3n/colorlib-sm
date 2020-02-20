@@ -453,6 +453,33 @@ stock void CRemoveTags(char[] message, int maxlength)
 }
 
 /**
+ * Removes colors from the string.
+ *
+ * @param message   String.
+ * @return          No return
+ */
+stock void CRemoveColors(char[] message, int maxlength)
+{
+    int index = 0;
+    for (int i = 0; i < maxlength; ++i)
+    {
+        if (message[i] == 0x00)
+        {
+            break;
+        }
+
+        if (message[i] >= 0x1 && message[i] <= 0x10)
+        {
+            ++index;
+            continue;
+        }
+
+        message[index] = message[i];
+        ++index;
+    }
+}
+
+/**
  * This function should only be used right in front of
  * C_PrintToChatAll or C_PrintToChatAllEx and it tells
  * to those funcions to skip specified client when printing
