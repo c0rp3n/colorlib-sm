@@ -468,7 +468,7 @@ stock void CRemoveColors(char[] message, int maxlength)
             break;
         }
 
-        if (message[i] >= 0x1 && message[i] <= 0x10)
+        if (message[i] >= 0x01 && message[i] <= 0x10)
         {
             ++index;
             continue;
@@ -477,6 +477,8 @@ stock void CRemoveColors(char[] message, int maxlength)
         message[index] = message[i];
         ++index;
     }
+
+    message[index] = 0x00;
 }
 
 /**
