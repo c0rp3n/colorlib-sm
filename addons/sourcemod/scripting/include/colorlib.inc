@@ -609,14 +609,14 @@ stock void CSayText2(int client, int author, const char[] message)
 {
     if (_CL_SupportsProtoBuf())
     {
-        Protobuf pbMessage = UserMessageToProtobuf(StartMessageOne("SayText2", client, USERMSG_RELIABLE|USERMSG_BLOCKHOOKS));
+        Protobuf pbMessage = view_as<Protobuf>(StartMessageOne("SayText2", client, USERMSG_RELIABLE|USERMSG_BLOCKHOOKS));
         pbMessage.SetInt("ent_idx", author);
         pbMessage.SetBool("chat", true);
         pbMessage.SetString("msg_name", message);
-        pbMessage.SetString("params", "");
-        pbMessage.SetString("params", "");
-        pbMessage.SetString("params", "");
-        pbMessage.SetString("params", "");
+        pbMessage.AddString("params", "");
+        pbMessage.AddString("params", "");
+        pbMessage.AddString("params", "");
+        pbMessage.AddString("params", "");
     }
     else
     {
