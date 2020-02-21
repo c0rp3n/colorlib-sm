@@ -470,8 +470,7 @@ stock void CRemoveColors(char[] message, int maxlength)
 
         if (message[i] >= 0x01 && message[i] <= 0x10)
         {
-            ++index;
-            continue;
+            ++i;
         }
 
         message[index] = message[i];
