@@ -442,7 +442,7 @@ stock void CRemoveTags(char[] message, int maxlength)
                 ++i;
             }
         }
-        else if (index != i)
+        else
         {
             message[index] = message[i];
             ++index;

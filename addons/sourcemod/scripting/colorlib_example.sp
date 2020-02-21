@@ -39,4 +39,8 @@ public Action Command_ColorLib(int client, int args)
     CPrintToChat(client, buffer);
 
     CSayText2(client, client, "{teamcolor}Hello");
+
+    Format(buffer, sizeof(buffer), "Hello World");
+    CRemoveTags(buffer, sizeof(buffer));
+    CPrintToChat(client, buffer);
 }
