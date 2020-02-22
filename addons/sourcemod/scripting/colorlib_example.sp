@@ -32,15 +32,20 @@ public Action Command_ColorLib(int client, int args)
 
     CPrintToServer("CPrintToServer - {darkblue}%s - {darkred}%s", "Test", "Test");
 
+    CSayText2(client, client, "{teamcolor}Hello");
+
+    // Remove Escape codes test
     char buffer[MAX_MESSAGE_LENGTH];
     Format(buffer, sizeof(buffer), "{blue}Hello {green}World");
     CFormat(buffer, sizeof(buffer));
     CRemoveColors(buffer, sizeof(buffer));
     CPrintToChat(client, buffer);
 
-    CSayText2(client, client, "{teamcolor}Hello");
-
+    // Remove Tags test
     Format(buffer, sizeof(buffer), "Hello World");
     CRemoveTags(buffer, sizeof(buffer));
     CPrintToChat(client, buffer);
+
+    // Dont replace invalid Tags test
+    CPrintToChat(client, "{bad tag here}Hello {green}World");
 }

@@ -556,6 +556,8 @@ stock void CFormat(char[] message, int maxlength, int author = NO_INDEX)
         }
         else if (message[i] == '{')
         {
+            int ret_index = i;
+
             ++i;
             char color[16];
             for (int icolor = 0; icolor < sizeof(color); ++icolor)
@@ -569,7 +571,17 @@ stock void CFormat(char[] message, int maxlength, int author = NO_INDEX)
                 ++i;
             }
 
-            buffer[index] = view_as<char>(_CL_ColorMap(color));
+            char cc = view_as<char>(_CL_ColorMap(color));
+            if (cc)
+            {
+                buffer[index] = cc;
+            }
+            else
+            {
+                buffer[index] = '{';
+                i = ret_index;
+            }
+
             ++index;
         }
         else

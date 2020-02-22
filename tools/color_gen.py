@@ -88,6 +88,8 @@ ELSE_DEF = [
 
 CHAR_DEF = "\'{}\'"
 
+VIEW_AS_DEF = "view_as<CL_Colors>({})"
+
 RETURN_DEF = TAB + "return {};\n"
 
 colors = []
@@ -104,9 +106,9 @@ def get_indent(i : int) -> str:
 
     return indent
 
-def get_hex(i : int) -> str:
+def get_hex(i : int, n : int = 2) -> str:
     """Returns a hex representation of a char."""
-    return '0x' + '{:02x}'.format(i).upper()
+    return '0x' + '{:0{}x}'.format(i, n).upper()
 
 def get_indented_def(i : int, definition : str, first : bool = True) -> str:
     """Returns an indented definition string."""
@@ -197,9 +199,9 @@ def create_enum() -> str:
 
     return ENUM_DEF.format(enums)
 
-def create_return(color : str) -> str:
+def create_return(value : str) -> str:
     """Creates a return statement."""
-    return RETURN_DEF.format(color_enum_names[color])
+    return RETURN_DEF.format(value)
 
 def create_statement(definition : str,
                      indent : int,
@@ -237,7 +239,7 @@ def create_decisions(group : dict, indent : int = 0, depth : int = 0) -> str:
             else:
                 body = create_decisions(value, indent + 1, depth + 1)
         else:
-            body = create_return(value[0])
+            body = create_return(color_enum_names[value[0]])
         
         if i == 0:
             decisions = create_if(indent, depth, key, body)
@@ -253,7 +255,7 @@ def create_map() -> str:
 
     return COLOR_FUNCTION_DEF.format(
         create_decisions(groups), 
-        create_return('default')
+        create_return(VIEW_AS_DEF.format(get_hex(0)))
         )
 
 def parse_config(file, include_ref_colors : bool):

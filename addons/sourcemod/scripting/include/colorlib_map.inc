@@ -203,6 +203,6 @@ CL_Colors _CL_ColorMap(char color[16])
         }
     }
 
-    return CL_Color_Default;
+    return view_as<CL_Colors>(0x00);
 }
 
