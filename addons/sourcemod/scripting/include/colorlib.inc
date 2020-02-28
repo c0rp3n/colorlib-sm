@@ -528,7 +528,7 @@ stock int CPreFormat(char[] message)
  * 
  * On error/Errors: If there is more then one team color is used an error will be thrown.
  */
-stock void CFormat(char[] message, int maxlength, int author = NO_INDEX)
+stock void CFormat(char[] message, int maxlength)
 {
     int index = 0;
     for (int i = 0; i < maxlength; ++i)
