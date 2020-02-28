@@ -531,7 +531,6 @@ stock int CPreFormat(char[] message)
 stock void CFormat(char[] message, int maxlength, int author = NO_INDEX)
 {
     int index = 0;
-    char buffer[250];
     for (int i = 0; i < maxlength; ++i)
     {
         if (message[i] == 0x00)
@@ -544,11 +543,11 @@ stock void CFormat(char[] message, int maxlength, int author = NO_INDEX)
             ++i;
             if (message[i] == '{')
             {
-                buffer[index] = '{';
+                message[index] = '{';
             }
             else
             {
-                buffer[index] = '\\';
+                message[index] = '\\';
                 --i;
             }
 
@@ -574,11 +573,11 @@ stock void CFormat(char[] message, int maxlength, int author = NO_INDEX)
             char cc = view_as<char>(_CL_ColorMap(color));
             if (cc)
             {
-                buffer[index] = cc;
+                message[index] = cc;
             }
             else
             {
-                buffer[index] = '{';
+                message[index] = '{';
                 i = ret_index;
             }
 
@@ -586,12 +585,12 @@ stock void CFormat(char[] message, int maxlength, int author = NO_INDEX)
         }
         else
         {
-            buffer[index] = message[i];
+            message[index] = message[i];
             ++index;
         }
     }
 
-    strcopy(message, maxlength, buffer);
+    message[index] = 0x00;
 }
 
 /**
