@@ -11,7 +11,7 @@
 #define NO_INDEX -1
 #define NO_PLAYER -2
 
-enum _CL_ProtoBuff
+enum _CL_FeatureStatus
 {
     NotChecked = -1,
     DoesNotSupport = 0,
@@ -19,7 +19,10 @@ enum _CL_ProtoBuff
 }
 
 /* CL_Colors' properties */
-_CL_ProtoBuff _CL_proto_buff_support = NotChecked;
+#if defined CL_USE_MORE_COLORS
+_CL_FeatureStatus _CL_more_colors_support = NotChecked;
+#endif
+_CL_FeatureStatus _CL_proto_buff_support = NotChecked;
 bool _CL_skip_list[MAXPLAYERS + 1] = { false, ... };
 
 /**
@@ -558,28 +561,67 @@ stock void CFormat(char[] message, int maxlength)
             int ret_index = i;
 
             ++i;
-            char color[16];
-            for (int icolor = 0; icolor < sizeof(color); ++icolor)
+            #if defined CL_USE_MORE_COLORS
+            if (message[i] == '#')
             {
-                if (message[i] == '}')
+                // handle hex color
+
+                // first check for valid length
+                // use a buffer for cc here as to not currupt an invalid hex
+                // string by placing the color code over it.
+                char cc[4];
+                if (_CL_SupportsMoreColors() && // check for support here to
+                    message[i + 7] == '}' &&    // avoid color lookup
+                    _CL_GetHexColor(message[i + 1], cc))
                 {
-                    break;
+                    // copy color code
+                    message[i + 1] = cc[0];
+                    message[i + 2] = cc[1];
+                    message[i + 3] = cc[2];
+                    message[i + 4] = cc[3];
+
+                    // skip over cc
+                    i += 7;
+                    index += 3;
                 }
-
-                color[icolor] = message[i];
-                ++i;
-            }
-
-            char cc = view_as<char>(_CL_ColorMap(color));
-            if (cc)
-            {
-                message[index] = cc;
+                else
+                {
+                    // invalid hex tag return to the start index
+                    message[index] = '{';
+                    i = ret_index;
+                }
             }
             else
             {
-                message[index] = '{';
-                i = ret_index;
+            #endif
+                // handle normal color
+                char color[16];
+                for (int icolor = 0; icolor < sizeof(color); ++icolor)
+                {
+                    if (message[i] == '}')
+                    {
+                        break;
+                    }
+
+                    color[icolor] = message[i];
+                    ++i;
+                }
+
+                char cc = view_as<char>(_CL_ColorMap(color));
+                // check if the color code was valid
+                if (cc)
+                {
+                    message[index] = cc;
+                }
+                else
+                {
+                    // on a invalid color code return to the start index
+                    message[index] = '{';
+                    i = ret_index;
+                }
+            #if defined CL_USE_MORE_COLORS
             }
+            #endif
 
             ++index;
         }
@@ -592,6 +634,23 @@ stock void CFormat(char[] message, int maxlength)
 
     message[index] = 0x00;
 }
+
+#if defined CL_USE_MORE_COLORS
+/**
+ * Checks for ProtoBuff support for CSayText2.
+ *
+ * @return          No return.
+ */
+stock bool _CL_SupportsMoreColors()
+{
+    if (_CL_more_colors_support == NotChecked)
+    {
+        _CL_more_colors_support = _CL_IsSource2009() ? Supports : DoesNotSupport;
+    }
+
+    return _CL_more_colors_support == Supports;
+}
+#endif
 
 /**
  * Checks for ProtoBuff support for CSayText2.
@@ -658,3 +717,77 @@ stock void _CL_SendChatMessage(int client, int author, char[] message)
         PrintToChat(client, message);
     }
 }
+
+#if defined CL_USE_MORE_COLORS
+stock bool _CL_IsSource2009()
+{
+    if (GetEngineVersion() == Engine_CSS || GetEngineVersion() == Engine_HL2DM || GetEngineVersion() == Engine_DODS || GetEngineVersion() == Engine_TF2)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+stock int _CL_Get4BitFromHex(const char hex)
+{
+    char h = hex;
+    if (h >= '0' && h <= '9')
+    {
+        return h - '0';
+    }
+    else if (h >= 'A' && h <= 'F')
+    {
+        return h - 'A';
+    }
+    else if (h >= 'a' && h <= 'f')
+    {
+        return h - 'a';
+    }
+
+    return -1;
+}
+
+stock int _CL_GetByteFromHex(const char[] hex)
+{
+    int byte = 0;
+    int ret = _CL_Get4BitFromHex(hex[0]);
+    if (!ret)
+        return -1;
+
+    byte = ret << 4;
+
+    ret = _CL_Get4BitFromHex(hex[1]);
+    if (!ret)
+        return -1;
+
+    return byte | ret;
+}
+
+stock bool _CL_GetHexColor(const char[] hex, char cc[4])
+{
+    // escape code
+    cc[0] = 0x07;
+
+    // red byte
+    int ret = _CL_GetByteFromHex(hex);
+    if (!ret)
+        return false;
+    
+    cc[1] = ret;
+
+    // green byte
+    ret = _CL_GetByteFromHex(hex[2]);
+    if (!ret)
+        return false;
+    
+    cc[2] = ret;
+
+    // blue byte
+    ret = _CL_GetByteFromHex(hex[4]);
+    if (!ret)
+        return false;
+    
+    cc[3] = ret;
+}
+#endif
