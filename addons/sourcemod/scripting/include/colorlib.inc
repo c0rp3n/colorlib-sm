@@ -62,7 +62,7 @@ stock void CPrintToChatEx(int client, int author, const char[] message, any ...)
     int buffer_index = CPreFormat(buffer);
     int buffer_size = sizeof(buffer) - buffer_index;
     VFormat(buffer[buffer_index], buffer_size, message, 4);
-    CFormat(buffer[buffer_index], buffer_size, author);
+    CFormat(buffer[buffer_index], buffer_size);
     _CL_SendChatMessage(client, author, buffer);
 }
 
@@ -116,7 +116,7 @@ stock void CPrintToChatAllEx(int author, const char[] message, any ...)
             SetGlobalTransTarget(i);
 
             VFormat(buffer[buffer_index], buffer_size, message, 3);
-            CFormat(buffer[buffer_index], buffer_size, author);
+            CFormat(buffer[buffer_index], buffer_size);
             _CL_SendChatMessage(i, author, buffer);
         }
 
@@ -183,7 +183,7 @@ stock void CPrintToChatTeamEx(int team, int author, const char[] message, any ..
             SetGlobalTransTarget(i);
 
             VFormat(buffer[buffer_index], buffer_size, message, 4);
-            CFormat(buffer[buffer_index], buffer_size, author);
+            CFormat(buffer[buffer_index], buffer_size);
             _CL_SendChatMessage(i, author, buffer);
         }
 
