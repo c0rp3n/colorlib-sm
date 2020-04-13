@@ -789,5 +789,7 @@ stock bool _CL_GetHexColor(const char[] hex, char cc[4])
         return false;
     
     cc[3] = ret;
+
+    return true;
 }
 #endif

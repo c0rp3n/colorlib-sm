@@ -3,7 +3,6 @@
 
 #include <sourcemod>
 #include <cstrike>
-#define CL_USE_MORE_COLORS
 #include <colorlib>
 
 public void OnPluginStart()
