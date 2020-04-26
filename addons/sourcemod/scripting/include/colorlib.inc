@@ -5,7 +5,7 @@
 
 #include <colorlib_map>
  
-#define MAX_MESSAGE_LENGTH 250
+#define MAX_MESSAGE_LENGTH 345
 
 #define SERVER_INDEX 0
 #define NO_INDEX -1
