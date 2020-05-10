@@ -405,6 +405,7 @@ stock void CPrintToServer(const char[] message, any ...)
 
 /**
  * Removes color tags from the string.
+ * E.g. "{default}Hello {red}World" -> "Hello World".
  *
  * @param message   String.
  * @return          No return
@@ -453,7 +454,8 @@ stock void CRemoveTags(char[] message, int maxlength)
 }
 
 /**
- * Removes colors from the string.
+ * Removes colors escape codes from the string.
+ * E.g. "\x01Hello \x02World" -> "Hello World".
  *
  * @param message   String.
  * @return          No return
