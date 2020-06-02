@@ -16,6 +16,8 @@ public Plugin myinfo =
 
 public void OnPluginStart()
 {
+    HookEvent("player_changename", Event_NameChange, EventHookMode_Pre);
+
     for (int i = 1; i < MaxClients; ++i)
     {
         if (IsClientInGame(i))
@@ -34,4 +36,21 @@ public void OnClientPutInServer(int client)
     {
         SetClientName(client, buffer);
     }
+}
+
+public Action Event_NameChange(Event event, const char[] name, bool dontBroadcast)
+{
+    int client = GetClientOfUserId(event.GetInt("userid"));
+
+    char buffer[64];
+    GetEventString(event, "newname", buffer, sizeof(buffer));
+
+    CRemoveTags(buffer, sizeof(buffer));
+    if (buffer[0] == 0)
+    {
+        return Plugin_Stop;
+    }
+    SetClientName(client, buffer);
+
+    return Plugin_Continue;
 }
