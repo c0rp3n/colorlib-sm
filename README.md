@@ -89,10 +89,12 @@ void CShowActivity(int author, const char[] message, any ...)
 void CShowActivityEx(int author, const char[] tag, const char[] message, any ...)
 void CShowActivity2(int author, const char[] tag, cconst char[] message, any ...)
 void CPrintToServer(const char[] message, any ...)
+void CGetClientName(int client, char[] name, int mexlength)
 int  CPreFormat(char[] message, int maxlength)
 void CFormat(char[] message, int maxlength, int author = -1)
 void CRemoveTags(char[] message, int maxlength)
 void CRemoveColors(char[] message, int maxlength)
+void CEscapeColors(char[] message, int maxlength)
 ```
 
 ## Related Projects
