@@ -416,6 +416,7 @@ stock void CGetClientName(int client, char[] name, int maxlength, bool remove = 
  * E.g. "{default}Hello {red}World" -> "Hello World".
  *
  * @param message   String.
+ * @param maxlength Size of the message buffer.
  * @return          No return
  */
 stock void CRemoveTags(char[] message, int maxlength)
@@ -466,6 +467,7 @@ stock void CRemoveTags(char[] message, int maxlength)
  * E.g. "\x01Hello \x02World" -> "Hello World".
  *
  * @param message   String.
+ * @param maxlength Size of the message buffer.
  * @return          No return
  */
 stock void CRemoveColors(char[] message, int maxlength)
@@ -587,7 +589,7 @@ stock int CPreFormat(char[] message)
  * Replaces color tags in a string with color codes
  *
  * @param message   String.
- * @param maxlength Maximum length of the string _CL_buffer.
+ * @param maxlength Size of the message buffer.
  * @return          Client index that can be used for SayText2 author index
  * 
  * On error/Errors: If there is more then one team color is used an error will be thrown.
