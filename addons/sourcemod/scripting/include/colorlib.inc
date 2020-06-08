@@ -429,7 +429,15 @@ stock void CRemoveTags(char[] message, int maxlength)
             break;
         }
 
-        if (message[i] == '\\')
+        if (message[i] == '{')
+        {
+            ++i;
+            while (message[i] != '}')
+            {
+                ++i;
+            }
+        }
+        else if (message[i] == '\\')
         {
             ++i;
             if (message[i] == '{')
@@ -443,14 +451,6 @@ stock void CRemoveTags(char[] message, int maxlength)
             }
 
             ++index;
-        }
-        else if (message[i] == '{')
-        {
-            ++i;
-            while (message[i] != '}')
-            {
-                ++i;
-            }
         }
         else
         {
@@ -604,22 +604,7 @@ stock void CFormat(char[] message, int maxlength)
             break;
         }
 
-        if (message[i] == '\\')
-        {
-            ++i;
-            if (message[i] == '{')
-            {
-                message[index] = '{';
-            }
-            else
-            {
-                message[index] = '\\';
-                --i;
-            }
-
-            ++index;
-        }
-        else if (message[i] == '{')
+        if (message[i] == '{')
         {
             int ret_index = i;
 
@@ -645,6 +630,21 @@ stock void CFormat(char[] message, int maxlength)
             {
                 message[index] = '{';
                 i = ret_index;
+            }
+
+            ++index;
+        }
+        else if (message[i] == '\\')
+        {
+            ++i;
+            if (message[i] == '{')
+            {
+                message[index] = '{';
+            }
+            else
+            {
+                message[index] = '\\';
+                --i;
             }
 
             ++index;
