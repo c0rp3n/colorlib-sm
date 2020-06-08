@@ -391,10 +391,32 @@ stock void CPrintToServer(const char[] message, any ...)
 }
 
 /**
+ * Gets a clients name that is safe to use with Color Lib.
+ *
+ * @param client    Client index.
+ * @param name      Buffer to store the clients name.
+ * @param maxlength The size of the buffer.
+ * @return          No return
+ */
+stock void CGetClientName(int client, char[] name, int maxlength, bool remove = true)
+{
+    GetClientName(client, name, maxlength);
+    if (remove)
+    {
+        CRemoveTags(name, maxlength);
+    }
+    else
+    {
+        CEscpaeTags(name, maxlength);
+    }
+}
+
+/**
  * Removes color tags from the string.
  * E.g. "{default}Hello {red}World" -> "Hello World".
  *
  * @param message   String.
+ * @param maxlength Size of the message buffer.
  * @return          No return
  */
 stock void CRemoveTags(char[] message, int maxlength)
@@ -407,7 +429,15 @@ stock void CRemoveTags(char[] message, int maxlength)
             break;
         }
 
-        if (message[i] == '\\')
+        if (message[i] == '{')
+        {
+            ++i;
+            while (message[i] != '}')
+            {
+                ++i;
+            }
+        }
+        else if (message[i] == '\\')
         {
             ++i;
             if (message[i] == '{')
@@ -421,14 +451,6 @@ stock void CRemoveTags(char[] message, int maxlength)
             }
 
             ++index;
-        }
-        else if (message[i] == '{')
-        {
-            ++i;
-            while (message[i] != '}')
-            {
-                ++i;
-            }
         }
         else
         {
@@ -445,6 +467,7 @@ stock void CRemoveTags(char[] message, int maxlength)
  * E.g. "\x01Hello \x02World" -> "Hello World".
  *
  * @param message   String.
+ * @param maxlength Size of the message buffer.
  * @return          No return
  */
 stock void CRemoveColors(char[] message, int maxlength)
@@ -464,6 +487,60 @@ stock void CRemoveColors(char[] message, int maxlength)
 
         message[index] = message[i];
         ++index;
+    }
+
+    message[index] = 0x00;
+}
+
+/**
+ * Escapes colors escape codes from the string.
+ * E.g. "{red}Hello {blue}World" -> "\{red}Hello \{blue}World".
+ * This means they shal be ignored by CFormat, useful for sanitising player
+ * names for printing.
+ *
+ * @param message   String.
+ * @param maxlength Size of the message buffer.
+ * @return          No return
+ */
+stock void CEscpaeTags(char[] message, int maxlength)
+{
+    int index = 0;
+    for (int i = 0; i < maxlength; ++i)
+    {
+        if (message[i] == 0x00)
+        {
+            break;
+        }
+
+        if (message[i] == '{')
+        {
+            message[index] = '\\';
+            ++index;
+            message[index] = '{';
+            ++index;
+        }
+        else if (message[i] == '\\')
+        {
+            ++i;
+            if (message[i] == '{')
+            {
+                message[index] = '\\';
+                ++index;
+                message[index] = '{';
+            }
+            else
+            {
+                message[index] = '\\';
+                --i;
+            }
+
+            ++index;
+        }
+        else
+        {
+            message[index] = message[i];
+            ++index;
+        }
     }
 
     message[index] = 0x00;
@@ -512,7 +589,7 @@ stock int CPreFormat(char[] message)
  * Replaces color tags in a string with color codes
  *
  * @param message   String.
- * @param maxlength Maximum length of the string _CL_buffer.
+ * @param maxlength Size of the message buffer.
  * @return          Client index that can be used for SayText2 author index
  * 
  * On error/Errors: If there is more then one team color is used an error will be thrown.
@@ -527,22 +604,7 @@ stock void CFormat(char[] message, int maxlength)
             break;
         }
 
-        if (message[i] == '\\')
-        {
-            ++i;
-            if (message[i] == '{')
-            {
-                message[index] = '{';
-            }
-            else
-            {
-                message[index] = '\\';
-                --i;
-            }
-
-            ++index;
-        }
-        else if (message[i] == '{')
+        if (message[i] == '{')
         {
             int ret_index = i;
 
@@ -568,6 +630,21 @@ stock void CFormat(char[] message, int maxlength)
             {
                 message[index] = '{';
                 i = ret_index;
+            }
+
+            ++index;
+        }
+        else if (message[i] == '\\')
+        {
+            ++i;
+            if (message[i] == '{')
+            {
+                message[index] = '{';
+            }
+            else
+            {
+                message[index] = '\\';
+                --i;
             }
 
             ++index;

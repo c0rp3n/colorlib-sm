@@ -48,4 +48,11 @@ public Action Command_ColorLib(int client, int args)
 
     // Dont replace invalid Tags test
     CPrintToChat(client, "{bad tag here}Hello {green}World");
+
+    // Santise player name
+    char name[64];
+    CGetClientName(client, name, sizeof(name), true);
+    CPrintToChat(client, "[SM] Your removed name: %s", name);
+    CGetClientName(client, name, sizeof(name), false);
+    CPrintToChat(client, "[SM] Your escaped name: %s", name);
 }
