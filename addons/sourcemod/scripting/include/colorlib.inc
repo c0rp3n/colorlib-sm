@@ -391,6 +391,27 @@ stock void CPrintToServer(const char[] message, any ...)
 }
 
 /**
+ * Gets a clients name that is safe to use with Color Lib.
+ *
+ * @param client    Client index.
+ * @param name      Buffer to store the clients name.
+ * @param maxlength The size of the buffer.
+ * @return          No return
+ */
+stock void CGetClientName(int client, char[] name, int maxlength, bool remove = true)
+{
+    GetClientName(client, name, maxlength);
+    if (remove)
+    {
+        CRemoveTags(name, maxlength);
+    }
+    else
+    {
+        CEscpaeTags(name, maxlength);
+    }
+}
+
+/**
  * Removes color tags from the string.
  * E.g. "{default}Hello {red}World" -> "Hello World".
  *
@@ -464,6 +485,60 @@ stock void CRemoveColors(char[] message, int maxlength)
 
         message[index] = message[i];
         ++index;
+    }
+
+    message[index] = 0x00;
+}
+
+/**
+ * Escapes colors escape codes from the string.
+ * E.g. "{red}Hello {blue}World" -> "\{red}Hello \{blue}World".
+ * This means they shal be ignored by CFormat, useful for sanitising player
+ * names for printing.
+ *
+ * @param message   String.
+ * @param maxlength Size of the message buffer.
+ * @return          No return
+ */
+stock void CEscpaeTags(char[] message, int maxlength)
+{
+    int index = 0;
+    for (int i = 0; i < maxlength; ++i)
+    {
+        if (message[i] == 0x00)
+        {
+            break;
+        }
+
+        if (message[i] == '{')
+        {
+            message[index] = '\\';
+            ++index;
+            message[index] = '{';
+            ++index;
+        }
+        else if (message[i] == '\\')
+        {
+            ++i;
+            if (message[i] == '{')
+            {
+                message[index] = '\\';
+                ++index;
+                message[index] = '{';
+            }
+            else
+            {
+                message[index] = '\\';
+                --i;
+            }
+
+            ++index;
+        }
+        else
+        {
+            message[index] = message[i];
+            ++index;
+        }
     }
 
     message[index] = 0x00;
