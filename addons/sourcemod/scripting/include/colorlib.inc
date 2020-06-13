@@ -407,7 +407,7 @@ stock void CGetClientName(int client, char[] name, int maxlength, bool remove = 
     }
     else
     {
-        CEscpaeTags(name, maxlength);
+        CEscapeTags(name, maxlength);
     }
 }
 
@@ -502,7 +502,7 @@ stock void CRemoveColors(char[] message, int maxlength)
  * @param maxlength Size of the message buffer.
  * @return          No return
  */
-stock void CEscpaeTags(char[] message, int maxlength)
+stock void CEscapeTags(char[] message, int maxlength)
 {
     int index = 0;
     for (int i = 0; i < maxlength; ++i)
