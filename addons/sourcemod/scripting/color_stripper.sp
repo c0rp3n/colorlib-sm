@@ -40,17 +40,21 @@ public void OnClientPutInServer(int client)
 
 public Action Event_NameChange(Event event, const char[] name, bool dontBroadcast)
 {
-    int client = GetClientOfUserId(event.GetInt("userid"));
-
     char buffer[64];
-    GetEventString(event, "newname", buffer, sizeof(buffer));
+    event.GetString("newname", buffer, sizeof(buffer));
 
+    int len = strlen(buffer);
     CRemoveTags(buffer, sizeof(buffer));
     if (buffer[0] == 0)
     {
         return Plugin_Stop;
     }
-    SetClientName(client, buffer);
+    if (len != strlen(buffer))
+    {
+        event.SetString("newname", buffer);
+
+        return Plugin_Changed;
+    }
 
     return Plugin_Continue;
 }
