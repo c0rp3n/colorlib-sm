@@ -21,7 +21,6 @@ env:
 
 install:
   - mkdir deps
-  - DEPS_DIR=$PWD/deps
   - git clone https://github.com/c0rp3n/spshell-includes.git deps/spshell-includes
   - git clone --recursive https://github.com/alliedmodders/sourcepawn.git deps/sourcepawn
   - cd deps/sourcepawn
@@ -42,5 +41,5 @@ install:
 
 script:
   - cd $TRAVIS_BUILD_DIR
-  - spcomp -E -w234 -O2 -v2 -i$"DEPS_DIR/sourcepawn/tests" -i$"DEPS_DIR/spshell-include/include" -i"./addons/sourcemod/scripting/include" ./test/colorlib_tests.sp
+  - spcomp -E -w234 -O2 -v2 -i$"./deps/sourcepawn/tests" -i$"./deps/spshell-include/include" -i"./addons/sourcemod/scripting/include" ./test/colorlib_tests.sp
   - spshell ./colorlib_tests.smx
