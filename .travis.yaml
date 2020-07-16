@@ -1,0 +1,39 @@
+language: cpp
+
+dist: xenial
+
+addons:
+  apt:
+    packages:
+      - gcc-multilib
+      - g++-multilib
+      - libstdc++6
+      - lib32stdc++6
+      - libc6-dev
+      - libc6-dev-i386
+      - linux-libc-dev
+      - linux-libc-dev:i386#
+
+env:
+  matrix:
+    - AM_CC=clang AM_CXX=clang++ AM_ARCH=x86 AM_TYPE=optimize
+    - AM_CC=clang AM_CXX=clang++ AM_ARCH=x64 AM_TYPE=optimize
+
+install:
+  - mkdir deps
+  - DEPS_DIR=$PWD/deps
+  - git clone https://github.com/c0rp3n/spshell-includes.git deps/spshell-includes
+  - git clone https://github.com/alliedmodders/sourcepawn.git deps/sourcepawn
+  - cd deps/sourcepawn
+  - CHECKOUT_DIR=$PWD && cd .. && $CHECKOUT_DIR/tools/checkout-deps.sh && cd $CHECKOUT_DIR
+  - export PATH="~/.local/bin:$PATH"
+  - $AM_CXX --version
+  - mkdir $AM_CC-$AM_ARCH-$AM_TYPE && cd $AM_CC-$AM_ARCH-$AM_TYPE
+  - CC=$AM_CC CXX=$AM_CXX python ../configure.py --enable-$AM_TYPE --target-arch=$AM_ARCH
+  - ambuild
+  - cp compiler/spcomp.$AM_ARCH/spcomp ~/.local/bin/spcomp
+  - cp vm/spshell.$AM_ARCH/spshell ~/.local/bin/spshell
+
+script:
+  - spcomp -E -w234 -O2 -v2 -i$"DEPS_DIR/sourcepawn/tests" -i$"DEPS_DIR/spshell-include/include" -i"./addons/sourcemod/scripting/include" ./tests/colorlib_tests.sp
+  - spshell ./colorlib_tests.smx
