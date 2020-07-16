@@ -33,11 +33,11 @@ install:
   - ambuild
   - |
     if [ "$AM_ARCH" == "x86" ] then
-      cp compiler/spcomp/spcomp ~/.local/bin/spcomp
-      cp vm/spshell/spshell ~/.local/bin/spshell
+      cp compiler/spcomp/spcomp ~/.local/bin/spcomp;
+      cp vm/spshell/spshell ~/.local/bin/spshell;
     else
-      cp compiler/spcomp.x64/spcomp ~/.local/bin/spcomp
-      cp vm/spshell.x64/spshell ~/.local/bin/spshell
+      cp compiler/spcomp.x64/spcomp ~/.local/bin/spcomp;
+      cp vm/spshell.x64/spshell ~/.local/bin/spshell;
     fi
 
 script:
