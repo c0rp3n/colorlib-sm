@@ -31,9 +31,15 @@ install:
   - mkdir $AM_CC-$AM_ARCH-$AM_TYPE && cd $AM_CC-$AM_ARCH-$AM_TYPE
   - CC=$AM_CC CXX=$AM_CXX python ../configure.py --enable-$AM_TYPE --target-arch=$AM_ARCH
   - ambuild
-  - cp compiler/spcomp.$AM_ARCH/spcomp ~/.local/bin/spcomp
-  - cp vm/spshell.$AM_ARCH/spshell ~/.local/bin/spshell
+  - |
+    if [ "$AM_ARCH" == "x86" ] then
+      cp compiler/spcomp/spcomp ~/.local/bin/spcomp
+      cp vm/spshell/spshell ~/.local/bin/spshell
+    else
+      cp compiler/spcomp.x64/spcomp ~/.local/bin/spcomp
+      cp vm/spshell.x64/spshell ~/.local/bin/spshell
+    fi
 
 script:
-  - spcomp -E -w234 -O2 -v2 -i$"DEPS_DIR/sourcepawn/tests" -i$"DEPS_DIR/spshell-include/include" -i"./addons/sourcemod/scripting/include" ./tests/colorlib_tests.sp
+  - spcomp -E -w234 -O2 -v2 -i$"DEPS_DIR/sourcepawn/tests" -i$"DEPS_DIR/spshell-include/include" -i"./addons/sourcemod/scripting/include" ./test/colorlib_tests.sp
   - spshell ./colorlib_tests.smx
