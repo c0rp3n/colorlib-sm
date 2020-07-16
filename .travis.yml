@@ -23,7 +23,7 @@ install:
   - mkdir deps
   - DEPS_DIR=$PWD/deps
   - git clone https://github.com/c0rp3n/spshell-includes.git deps/spshell-includes
-  - git clone https://github.com/alliedmodders/sourcepawn.git deps/sourcepawn
+  - git clone --recursive https://github.com/alliedmodders/sourcepawn.git deps/sourcepawn
   - cd deps/sourcepawn
   - CHECKOUT_DIR=$PWD && cd .. && $CHECKOUT_DIR/tools/checkout-deps.sh && cd $CHECKOUT_DIR
   - export PATH="~/.local/bin:$PATH"
