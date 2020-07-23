@@ -39,8 +39,9 @@ stock void CPrintToChat(int client, const char[] message, any ...)
     SetGlobalTransTarget(client);
 
     int buffer_index = CPreFormat(_CL_buffer);
-    VFormat(_CL_buffer[buffer_index], sizeof(_CL_buffer) - buffer_index, message, 3);
-    CFormat(_CL_buffer[buffer_index], sizeof(_CL_buffer) - buffer_index);
+    int buffer_size = sizeof(_CL_buffer) - buffer_index;
+    VFormat(_CL_buffer[buffer_index], buffer_size, message, 3);
+    CFormat(_CL_buffer[buffer_index], buffer_size);
     PrintToChat(client, _CL_buffer);
 }
 
