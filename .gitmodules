@@ -1,0 +1,3 @@
+[submodule "tools/colorlib-gen"]
+	path = tools/colorlib-gen
+	url = https://github.com/c0rp3n/colorlib-gen.git

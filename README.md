@@ -24,7 +24,13 @@ dragons.*
 
 ## Usage
 ### Color Lib
-Simply include colorlib and you should be good to go.
+First clone the repo.
+```bash
+git clone --recursive https://github.com/c0rp3n/colorlib-sm.git
+```
+Then include colorlib in your project make sure to either pass the include dir
+to `spcomp` or copy the includes to your include dir.
+For an example `vscode` config see [here](https://gist.github.com/c0rp3n/0f2d84e576bfb471de2a793f56df9758).
 
 *If previously using another color library make sure to no longer include it,
 and update the config and regenerate the `colorlib_map.inc` as show below with
@@ -50,29 +56,34 @@ public Action Command_ColorLib(int client, int args)
 ```
 
 ### Color Gen
-To change the output colors you first need to create a new or edit your config
-file.
+To change the output colors you first need to install `colorlib_gen`.
+```bash
+cd tools/colorlib-gen/
+pip install requirements.txt
+pip install .
+```
 
-There is an example config file provided that it is recommended you copy from it
-can be seen [here](tools/example_conf.yaml).
+There is an example config file provided that it is recommended you copy it and
+make any required changes can be seen [here](tools/example_conf.yaml).
 
-Then you can rerun `color_gen.py` to generate a new `colorlib_map.inc` to
+Then you can rerun `colorlib_gen` to generate a new `colorlib_map.inc` to
 replace the default one provided.
 
 #### Example Usage
 ```bash
 # for more info use ./color_gen.py -h
-./color_gen.py -r --config "./example_conf.yaml" "./colorlib_map.inc"
+colorlib_gen -re --config "./example_conf.yaml" "./colorlib_map.inc"
 ```
 
-#### Example GitHub workflow
+#### Example GitHub workflow for SourcePawn
 __Note:__ _This must executed before the plugins will be compiled._
 ```yaml
-- name: Generate colorlib.inc
-  run: python3 ./color_gen.py -r --config "./example_conf.yaml" "../addons/sourcemod/scripting/include/colorlib_map.inc"
-  working-directory: ./tools
+- name: Generate colorlib_map.inc
+  run:
+    - python3 ./setup.py install
+    - colorlib_gen -r --config "./example_conf.yaml" "../include/colorlib_map.inc"
+  working-directory: ./tools/colorlib-gen
 ```
-
 
 ### Functions
 ```SourcePawn
@@ -104,4 +115,4 @@ void CEscapeColors(char[] message, int maxlength)
  - More Colors: https://forums.alliedmods.net/showthread.php?t=185016
 
 ## Download
- - https://github.com/c0rp3n/colorlib
+ - https://github.com/c0rp3n/colorlib-sm
