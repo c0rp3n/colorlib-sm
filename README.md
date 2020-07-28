@@ -78,11 +78,26 @@ colorlib_gen -re --config "./example_conf.yaml" "./colorlib_map.inc"
 #### Example GitHub workflow for SourcePawn
 __Note:__ _This must executed before the plugins will be compiled._
 ```yaml
+- name: Set up Python
+  uses: actions/setup-python@v2
+  with:
+    python-version: '3.x'
+
+- name: Install dependencies
+  run: python3 -m pip install --upgrade pip setuptools wheel
+
+- name: Download colorlib-gen
+  run: |
+    cd tools
+    git clone https://github.com/c0rp3n/colorlib-gen.git
+
+- name: Install colorlib-gen
+  run: |
+    cd tools/colorlib-gen
+    pip install -r ./requirements.txt
+    python3 ./setup.py install
 - name: Generate colorlib_map.inc
-  run:
-    - python3 ./setup.py install
-    - colorlib_gen -r --config "./example_conf.yaml" "../include/colorlib_map.inc"
-  working-directory: ./tools/colorlib-gen
+  run: colorlib_gen -re --config "./example_conf.yaml" "../include/colorlib_map.inc"
 ```
 
 ### Functions
