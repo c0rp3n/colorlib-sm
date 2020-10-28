@@ -11,15 +11,8 @@
 #define NO_INDEX -1
 #define NO_PLAYER -2
 
-enum _CL_ProtoBuff
-{
-    NotChecked = -1,
-    DoesNotSupport = 0,
-    Supports,
-}
-
 /* CL_Colors' properties */
-_CL_ProtoBuff _CL_proto_buff_support = NotChecked;
+bool _CL_proto_buff_support;
 int _CL_buffer_index;
 int _CL_buffer_size;
 char _CL_buffer[MAX_MESSAGE_LENGTH];
@@ -626,20 +619,6 @@ stock void CFormat(char[] message, int maxlength)
 }
 
 /**
- * Checks for ProtoBuff support for CSayText2.
- *
- * @return          No return.
- */
-stock bool _CL_SupportsProtoBuf()
-{
-    if (_CL_proto_buff_support == NotChecked)
-    {
-        _CL_proto_buff_support = (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available) && (GetUserMessageType() == UM_Protobuf) ? Supports : DoesNotSupport;
-    }
-    return _CL_proto_buff_support == Supports;
-}
-
-/**
  * Sends a SayText2 usermessage to a client
  *
  * @param message   Client index
@@ -649,7 +628,7 @@ stock bool _CL_SupportsProtoBuf()
  */
 stock void CSayText2(int client, int author, const char[] message)
 {
-    if (_CL_SupportsProtoBuf())
+    if (_CL_proto_buff_support)
     {
         Protobuf pbMessage = view_as<Protobuf>(StartMessageOne("SayText2", client, USERMSG_RELIABLE|USERMSG_BLOCKHOOKS));
         pbMessage.SetInt("ent_idx", author);
@@ -695,6 +674,7 @@ stock void _CL_SendChatMessage(int client, int author, char[] message)
 
 public void OnPluginStart()
 {
+    _CL_proto_buff_support = (GetFeatureStatus(FeatureType_Native, "GetUserMessageType") == FeatureStatus_Available) && (GetUserMessageType() == UM_Protobuf);
     _CL_buffer_index = CPreFormat(_CL_buffer);
     _CL_buffer_size = sizeof(_CL_buffer) - _CL_buffer_index;
     _CL_OnPluginStart();
