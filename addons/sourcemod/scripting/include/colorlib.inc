@@ -582,32 +582,22 @@ stock void CFormat(char[] message, int maxlength)
 
         if (message[i] == '{')
         {
-            int ret_index = i;
-
             ++i;
-            char color[16];
-            for (int icolor = 0; icolor < sizeof(color); ++icolor)
-            {
-                if (message[i] == '}')
-                {
-                    break;
-                }
-
-                color[icolor] = message[i];
-                ++i;
-            }
-
-            char cc = view_as<char>(_CL_ColorMap(color));
+            int length = 0;
+            char cc = view_as<char>(_CL_ColorMap(message[i], length));
             if (cc)
             {
                 message[index] = cc;
+                i += length;
             }
             else
             {
                 message[index] = '{';
-                i = ret_index;
             }
 
+            /* we need to unpeek the increment for skipping over all of the
+             * color tag + so we dont skip a char for a bad tag */
+            --i;
             ++index;
         }
         else if (message[i] == '\\')

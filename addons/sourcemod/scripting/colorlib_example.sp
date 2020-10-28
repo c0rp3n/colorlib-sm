@@ -27,8 +27,8 @@ public Action Command_ColorLib(int client, int args)
     CReplyToCommandEx(client, client, "CReplyToCommandEx - {darkblue}%s - {darkred}%s", "Test", "Test");
 
     CShowActivity(client, "Command_ColorLib Usage: %s", "{red}CShowActivity");
-    CShowActivity2(client, "{green}[ColorLib]", "Command_ColorLib Usage: %s", "{red}CShowActivity2");
-    CShowActivityEx(client, "{green}[ColorLib]", "Command_ColorLib Usage: %s", "{red}CShowActivityEx");
+    CShowActivity2(client, "[{green}ColorLib{default}]", "Command_ColorLib Usage: %s", "{red}CShowActivity2");
+    CShowActivityEx(client, "[{green}ColorLib{default}]", "Command_ColorLib Usage: %s", "{red}CShowActivityEx");
 
     CPrintToServer("CPrintToServer - {darkblue}%s - {darkred}%s", "Test", "Test");
 
