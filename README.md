@@ -72,7 +72,7 @@ replace the default one provided.
 #### Example Usage
 ```bash
 # for more info use ./color_gen.py -h
-colorlib_gen -re --target "sourcepawn" --enum-name "CL_Color" --function-name "_CL_ColorMap" --terminator "}" --config ".\example_conf.yaml" colorlib_map.inc
+colorlib_gen -re --target "sourcepawn" --config "./example_conf.yaml" colorlib_map.inc
 ```
 
 #### Example GitHub workflow for SourcePawn
@@ -97,7 +97,7 @@ __Note:__ _This must executed before the plugins will be compiled._
     pip install -r ./requirements.txt
     python3 ./setup.py install
 - name: Generate colorlib_map.inc
-  run: colorlib_gen -re --target "sourcepawn" --enum-name "CL_Color" --function-name "_CL_ColorMap" --terminator "}" --config ".\example_conf.yaml" colorlib_map.inc
+  run: colorlib_gen -re --target "sourcepawn" --config "./example_conf.yaml" colorlib_map.inc
 ```
 
 ### Functions
