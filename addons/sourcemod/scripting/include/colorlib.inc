@@ -461,6 +461,21 @@ stock void CRemoveColors(char[] message, int maxlength)
 }
 
 /**
+ * Removes color tags and colors escape codes from the string.
+ * E.g. "\x01Hello \x02World" -> "Hello World".
+ * E.g. "{default}Hello {red}World" -> "Hello World".
+ *
+ * @param message   String.
+ * @param maxlength Size of the message buffer.
+ * @return          No return
+ */
+stock void CRemoveAllColors(char[] message, int maxlength)
+{
+    CRemoveTags(message, maxlength);
+    CRemoveColors(message, maxlength);
+}
+
+/**
  * Escapes colors escape codes from the string.
  * E.g. "{red}Hello {blue}World" -> "\{red}Hello \{blue}World".
  * This means they shal be ignored by CFormat, useful for sanitising player
