@@ -24,11 +24,23 @@ jobs:
         with:
           version: ${{ matrix.SM_VERSION }}
 
+      - name: Clone Multi Colors
+        uses: actions/checkout@v2
+        with:
+          repository: 'Bara/Multi-Colors'
+          ref: 'master'
+          path: 'deps/multicolors'
+
+      - name: Setup Multi Colors
+        run: |
+          MULTICOLORS_PATH=$GITHUB_WORKSPACE/deps/multicolors
+          echo "MULTICOLORS_INCLUDE=$MULTICOLORS_PATH/addons/sourcemod/scripting/include" >> $GITHUB_ENV
+
       - name: Compile Plugins
         run: |
           for file in $(find . -type d \( -path ./include -o -path ./libs -o -path ./missions -o -path ./skills \) -prune -o -type f -name *common.sp -prune -false -o -name '*.sp')
           do
             echo -e "\nCompiling $file..."
-            spcomp -E -w234 -O2 -v2 -i $SCRIPTS_PATH/include $file
+            spcomp -E -w234 -O2 -v2 -i $SCRIPTS_PATH/include -i $MULTICOLORS_INCLUDE $file
           done
         working-directory: ${{ env.SCRIPTS_PATH }}/
