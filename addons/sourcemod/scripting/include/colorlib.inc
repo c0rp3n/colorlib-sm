@@ -4,7 +4,7 @@
 #define _colorlib_included
 
 #include <colorlib_map>
- 
+
 #define MAX_MESSAGE_LENGTH 512
 
 #define SERVER_INDEX 0
@@ -26,7 +26,7 @@ bool _CL_skip_list[MAXPLAYERS + 1] = { false, ... };
  * @param client    Client index.
  * @param message   Message (formatting rules).
  * @return          No return
- * 
+ *
  * On error/Errors:   If the client is not connected an error will be thrown.
  */
 stock void CPrintToChat(int client, const char[] message, any ...)
@@ -46,7 +46,7 @@ stock void CPrintToChat(int client, const char[] message, any ...)
  * @param author    Author index whose color will be used for teamcolor tag.
  * @param message   Message (formatting rules).
  * @return          No return
- * 
+ *
  * On error/Errors: If the client or author are not connected an error will be thrown.
  */
 stock void CPrintToChatEx(int client, int author, const char[] message, any ...)
@@ -90,7 +90,7 @@ stock void CPrintToChatAll(const char[] message, any ...)
  * @param author    Author index whos color will be used for teamcolor tag.
  * @param message   Message (formatting rules).
  * @return          No return
- * 
+ *
  * On error/Errors: If the author is not connected an error will be thrown.
  */
 stock void CPrintToChatAllEx(int author, const char[] message, any ...)
@@ -117,7 +117,7 @@ stock void CPrintToChatAllEx(int author, const char[] message, any ...)
  * @param team      Team index.
  * @param message   Message (formatting rules).
  * @return          No return
- * 
+ *
  * On error/Errors:   If the client is not connected an error will be thrown.
  */
 stock void CPrintToChatTeam(int team, const char[] message, any ...)
@@ -148,7 +148,7 @@ stock void CPrintToChatTeam(int team, const char[] message, any ...)
  * @param author    Author index whos color will be used for teamcolor tag.
  * @param message   Message (formatting rules).
  * @return          No return
- * 
+ *
  * On error/Errors:   If the client is not connected an error will be thrown.
  */
 stock void CPrintToChatTeamEx(int team, int author, const char[] message, any ...)
@@ -178,7 +178,7 @@ stock void CPrintToChatTeamEx(int team, int author, const char[] message, any ..
  * @param flags     Admin flags.
  * @param message   Message (formatting rules).
  * @return          No return
- * 
+ *
  * On error/Errors:   If the client is not connected an error will be thrown.
  */
 stock void CPrintToChatAdmins(int flags, const char[] message, any ...)
@@ -210,7 +210,7 @@ stock void CPrintToChatAdmins(int flags, const char[] message, any ...)
  * @param message   Formatting rules.
  * @param ...       Variable number of format parameters.
  * @return          No return
- * 
+ *
  * On error/Errors:   If the client is not connected or invalid.
  */
 stock void CReplyToCommand(int client, const char[] message, any ...)
@@ -247,7 +247,7 @@ stock void CReplyToCommand(int client, const char[] message, any ...)
  * @param message   Formatting rules.
  * @param ...       Variable number of format parameters.
  * @return          No return
- * 
+ *
  * On error/Errors:   If the client is not connected or invalid.
  */
 stock void CReplyToCommandEx(int client, int author, const char[] message, any ...)
@@ -283,7 +283,7 @@ stock void CReplyToCommandEx(int client, int author, const char[] message, any .
  * @param message   Formatting rules.
  * @param ...       Variable number of format parameters.
  * @return          No return
- * 
+ *
  * On error/Errors:   If the client is not connected or invalid.
  */
 stock void CShowActivity(int client, const char[] message, any ...)
@@ -303,7 +303,7 @@ stock void CShowActivity(int client, const char[] message, any ...)
  * @param message   Formatting rules.
  * @param ...       Variable number of format parameters.
  * @return          No return
- * 
+ *
  * On error/Errors:   If the client is not connected or invalid.
  */
 stock void CShowActivity2(int client, const char[] tag, const char[] message, any ...)
@@ -327,7 +327,7 @@ stock void CShowActivity2(int client, const char[] tag, const char[] message, an
  * @param message   Formatting rules.
  * @param ...       Variable number of format parameters.
  * @return          No return
- * 
+ *
  * On error/Errors:   If the client is not connected or invalid.
  */
 stock void CShowActivityEx(int client, const char[] tag, const char[] message, any ...)
@@ -448,13 +448,72 @@ stock void CRemoveColors(char[] message, int maxlength)
             break;
         }
 
+        // if the current character is an escape code it should not be copied
         if (message[i] >= 0x01 && message[i] <= 0x10)
         {
-            ++i;
+            continue;
         }
 
         message[index] = message[i];
         ++index;
+    }
+
+    message[index] = 0x00;
+}
+
+/**
+ * Removes color tags and colors escape codes from the string.
+ * E.g. "\x01Hello \x02World" -> "Hello World".
+ * E.g. "{default}Hello {red}World" -> "Hello World".
+ *
+ * @param message   String.
+ * @param maxlength Size of the message buffer.
+ * @return          No return
+ */
+stock void CRemoveAllColors(char[] message, int maxlength)
+{
+    int index = 0;
+    for (int i = 0; i < maxlength; ++i)
+    {
+        if (message[i] == 0x00)
+        {
+            break;
+        }
+
+        // if the current character is an escape code it should not be copied
+        if (message[i] >= 0x01 && message[i] <= 0x10)
+        {
+            continue;
+        }
+
+        if (message[i] == '{')
+        {
+            ++i;
+            while (message[i] != '}')
+            {
+                ++i;
+            }
+        }
+        else if (message[i] == '\\')
+        {
+            ++i;
+            if (message[i] == '{')
+            {
+                message[index] = '{';
+            }
+            else
+            {
+                message[index] = '\\';
+                --i;
+            }
+
+            ++index;
+        }
+        else
+        {
+            message[index] = message[i];
+            ++index;
+        }
     }
 
     message[index] = 0x00;
@@ -520,7 +579,7 @@ stock void CEscapeTags(char[] message, int maxlength)
  * to those funcions to skip specified client when printing
  * message to all clients. After message is printed client will
  * no more be skipped.
- * 
+ *
  * @param client    Client index
  * @return          No return
  */
@@ -560,7 +619,7 @@ stock int CPreFormat(char[] message)
  * @param message   String.
  * @param maxlength Size of the message buffer.
  * @return          Client index that can be used for SayText2 author index
- * 
+ *
  * On error/Errors: If there is more then one team color is used an error will be thrown.
  */
 stock void CFormat(char[] message, int maxlength)
