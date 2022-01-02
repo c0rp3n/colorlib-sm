@@ -36,14 +36,19 @@ public Action Command_ColorLib(int client, int args)
 
     // Remove Escape codes test
     char buffer[MAX_MESSAGE_LENGTH];
-    Format(buffer, sizeof(buffer), "{blue}Hello {green}World");
+    Format(buffer, sizeof(buffer), "{blue}Hello {green}{red}World");
     CFormat(buffer, sizeof(buffer));
     CRemoveColors(buffer, sizeof(buffer));
     CPrintToChat(client, buffer);
 
     // Remove Tags test
-    Format(buffer, sizeof(buffer), "Hello World");
+    Format(buffer, sizeof(buffer), "{blue}Hello \\{green}World");
     CRemoveTags(buffer, sizeof(buffer));
+    CPrintToChat(client, buffer);
+
+    // Remove Colors Escape Codes & Tags test
+    Format(buffer, sizeof(buffer), "{blue}Hello \x07World");
+    CRemoveAllColors(buffer, sizeof(buffer));
     CPrintToChat(client, buffer);
 
     // Dont replace invalid Tags test
