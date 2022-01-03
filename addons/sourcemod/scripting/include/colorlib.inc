@@ -1,3 +1,7 @@
+//
+// Copyright (C) 2020-2022 Oliver John Hitchcock. Licensed under GNU GPLv3.
+//
+
 #if defined _colorlib_included
     #endinput
 #endif
