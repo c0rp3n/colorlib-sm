@@ -6,7 +6,6 @@ jobs:
   test:
     strategy:
       matrix:
-        build_type: [optimize, debug]
         build_target: [x86, x64]
       fail-fast: false
     runs-on: ubuntu-latest
@@ -54,7 +53,7 @@ jobs:
         run: |
           mkdir objdir
           cd objdir
-          python ../configure.py --enable-${{ matrix.build_type }} --targets=${{ matrix.build_target }} $ENABLE_ASAN
+          python ../configure.py --enable-optimize --targets=${{ matrix.build_target }} $ENABLE_ASAN
           ambuild
         working-directory: deps/sourcepawn
 
