@@ -60,4 +60,6 @@ public Action Command_ColorLib(int client, int args)
     CPrintToChat(client, "[SM] Your removed name: %s", name);
     CGetClientName(client, name, sizeof(name), false);
     CPrintToChat(client, "[SM] Your escaped name: %s", name);
+
+    return Plugin_Handled;
 }
