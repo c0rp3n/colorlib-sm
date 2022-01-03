@@ -5,8 +5,6 @@
 
 #include <colorlib_map>
 
-#if !defined CL_UNIT_TEST
-
 #define MAX_MESSAGE_LENGTH 512
 
 #define SERVER_INDEX 0
@@ -14,10 +12,13 @@
 #define NO_PLAYER -2
 
 /* CL_Colors' properties */
-bool _CL_proto_buff_support;
-int _CL_buffer_index;
-int _CL_buffer_size;
 char _CL_buffer[MAX_MESSAGE_LENGTH];
+int  _CL_buffer_index = 0;
+int  _CL_buffer_size  = sizeof(_CL_buffer);
+
+#if !defined CL_UNIT_TEST
+
+bool _CL_proto_buff_support;
 char _CL_buffer_tag[MAX_MESSAGE_LENGTH];
 bool _CL_skip_list[MAXPLAYERS + 1] = { false, ... };
 
@@ -535,25 +536,28 @@ stock void CRemoveAllColors(char[] message, int maxlength)
  */
 stock void CEscapeTags(char[] message, int maxlength)
 {
+    strcopy(_CL_buffer[_CL_buffer_index], _CL_buffer_size, message);
+
+    int i     = _CL_buffer_index;
     int index = 0;
-    for (int i = 0; i < maxlength; ++i)
+    for (; index < maxlength; ++i)
     {
-        if (message[i] == 0x00)
+        if (_CL_buffer[i] == 0x00)
         {
             break;
         }
 
-        if (message[i] == '{')
+        if (_CL_buffer[i] == '{')
         {
             message[index] = '\\';
             ++index;
             message[index] = '{';
             ++index;
         }
-        else if (message[i] == '\\')
+        else if (_CL_buffer[i] == '\\')
         {
             ++i;
-            if (message[i] == '{')
+            if (_CL_buffer[i] == '{')
             {
                 message[index] = '\\';
                 ++index;
@@ -569,7 +573,7 @@ stock void CEscapeTags(char[] message, int maxlength)
         }
         else
         {
-            message[index] = message[i];
+            message[index] = _CL_buffer[i];
             ++index;
         }
     }
