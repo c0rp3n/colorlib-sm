@@ -34,4 +34,6 @@ public Action Command_BenchLib(int client, int args)
     ReplyToCommand(client, "Time needed for CPrintToServer: %f", profile.Time);
 
     delete profile;
+
+    return Plugin_Handled;
 }
