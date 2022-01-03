@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        SM_VERSION: ["1.10", "1.11"]
+        sm-version: ["1.10.x", "1.11.x"]
 
     steps:
       - uses: actions/checkout@v2
@@ -19,10 +19,10 @@ jobs:
           echo "SOURCEMOD_PATH=$SOURCEMOD_PATH" >> $GITHUB_ENV
           echo "SCRIPTS_PATH=$SOURCEMOD_PATH/scripting" >> $GITHUB_ENV
 
-      - name: Setup SourcePawn Compiler ${{ matrix.SM_VERSION }}
+      - name: Setup SourcePawn Compiler ${{ matrix.sm-version }}
         uses: rumblefrog/setup-sp@master
         with:
-          version: ${{ matrix.SM_VERSION }}
+          version: ${{ matrix.sm-version }}
 
       - name: Clone Multi Colors
         uses: actions/checkout@v2
@@ -41,6 +41,6 @@ jobs:
           for file in *.sp
           do
             echo -e "\nCompiling $file..."
-            spcomp -E -w234 -O2 -v2 -i $SCRIPTS_PATH/include -i $MULTICOLORS_INCLUDE $file
+            spcomp -E -w234 -O2 -v2 -i $includePath -i $SCRIPTS_PATH/include -i $MULTICOLORS_INCLUDE $file
           done
         working-directory: ${{ env.SCRIPTS_PATH }}/
