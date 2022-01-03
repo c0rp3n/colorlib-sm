@@ -5,6 +5,8 @@
 
 #include <colorlib_map>
 
+#if !defined CL_UNIT_TEST
+
 #define MAX_MESSAGE_LENGTH 512
 
 #define SERVER_INDEX 0
@@ -379,6 +381,8 @@ stock void CGetClientName(int client, char[] name, int maxlength, bool remove = 
     }
 }
 
+#endif // not CL_UNIT_TEST
+
 /**
  * Removes color tags from the string.
  * E.g. "{default}Hello {red}World" -> "Hello World".
@@ -574,46 +578,6 @@ stock void CEscapeTags(char[] message, int maxlength)
 }
 
 /**
- * This function should only be used right in front of
- * C_PrintToChatAll or C_PrintToChatAllEx and it tells
- * to those funcions to skip specified client when printing
- * message to all clients. After message is printed client will
- * no more be skipped.
- *
- * @param client    Client index
- * @return          No return
- */
-stock void CSkipNextClient(int client)
-{
-    if (client < 1 || client > MaxClients)
-        ThrowError("Invalid client index %d", client);
-
-    _CL_skip_list[client] = true;
-}
-
-/**
- * Initialises the _CL_buffer for color formatting
- *
- * @param message   String.
- * @return          First free index in the array
- */
-stock int CPreFormat(char[] message)
-{
-    int index = 0;
-    // If CS:GO set invisible precolor
-    if (GetEngineVersion() == Engine_CSGO)
-    {
-        message[0] = ' ';
-        ++index;
-    }
-
-    message[index] = 0x01;
-    ++index;
-
-    return index;
-}
-
-/**
  * Replaces color tags in a string with color codes
  *
  * @param message   String.
@@ -676,6 +640,50 @@ stock void CFormat(char[] message, int maxlength)
 
     message[index] = 0x00;
 }
+
+#if !defined CL_UNIT_TEST
+
+/**
+ * This function should only be used right in front of
+ * C_PrintToChatAll or C_PrintToChatAllEx and it tells
+ * to those funcions to skip specified client when printing
+ * message to all clients. After message is printed client will
+ * no more be skipped.
+ *
+ * @param client    Client index
+ * @return          No return
+ */
+stock void CSkipNextClient(int client)
+{
+    if (client < 1 || client > MaxClients)
+        ThrowError("Invalid client index %d", client);
+
+    _CL_skip_list[client] = true;
+}
+
+/**
+ * Initialises the _CL_buffer for color formatting
+ *
+ * @param message   String.
+ * @return          First free index in the array
+ */
+stock int CPreFormat(char[] message)
+{
+    int index = 0;
+    // If CS:GO set invisible precolor
+    if (GetEngineVersion() == Engine_CSGO)
+    {
+        message[0] = ' ';
+        ++index;
+    }
+
+    message[index] = 0x01;
+    ++index;
+
+    return index;
+}
+
+
 
 /**
  * Sends a SayText2 usermessage to a client
@@ -740,3 +748,5 @@ public void OnPluginStart()
 }
 
 #define OnPluginStart _CL_OnPluginStart
+
+#endif // not CL_UNIT_TEST
