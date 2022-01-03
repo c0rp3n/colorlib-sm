@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Package
-        run: tar -czf ${{ github.ref_name }}.tar.gz $GITHUB_WORKSPACE/addons $GITHUB_WORKSPACE/LICENSE.md $GITHUB_WORKSPACE/READEME.md
+        run: tar -czf ${{ github.ref_name }}.tar.gz $GITHUB_WORKSPACE/addons $GITHUB_WORKSPACE/LICENSE.md $GITHUB_WORKSPACE/README.md
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
