@@ -8,12 +8,6 @@
 ColorLib is built as a replacement for Colors, it uses a a less naive approach
 to formatting messages to drastically improve the performance of C* functions.
 
-## Status
-
-*This project is still under active development and has not yet reached a stable
-version until v1.0.0 So when using this code currently expect random error and
-dragons.*
-
 ## Performance
 #### CPrintToChat
  - ColorLib - Time needed for 10000 messages: 0.0600535
@@ -127,6 +121,7 @@ void CEscapeColors(char[] message, int maxlength)
  - Multi-Colors: https://github.com/Bara/Multi-Colors
  - Stamm-Colors: https://github.com/popoklopsi/Stamm/blob/master/include/stamm/stamm-colors.inc
  - Colors: https://forums.alliedmods.net/showthread.php?t=96831
+ - ColorVariables: https://github.com/PremyslTalich/ColorVariables
  - More Colors: https://forums.alliedmods.net/showthread.php?t=185016
 
 ## Download
